@@ -1,0 +1,156 @@
+
+
+.navbar{
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* Пункт меню */
+.sidebar-link {
+    padding: 12px 10px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+    font-weight: 500;
+    font-size: 16px;
+    color: #111;
+    text-decoration: none;
+    transition: background 0.3s, color 0.3s;
+    position: relative;
+    text-align: left;
+    border-left: 3px solid transparent;
+}
+
+.sidebar-link:hover {
+    border-left: 3px solid #007aff;
+    background: rgba(58, 66, 75, 0.07);
+
+}
+
+.sidebar-link.active {
+    background: #e7efff;
+    color: #007aff; /* фирменный синий Apple */
+    font-weight: 600;
+    border-left: 3px solid #007aff;
+}
+
+.sidebar {
+
+    width: 260px;
+
+
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    /*box-shadow:*/
+    /*        0 1px 2px rgba(0, 0, 0, 0.05),*/
+    /*        0 4px 8px rgba(0, 0, 0, 0.08),*/
+    /*        0 10px 20px rgba(0, 0, 0, 0.06);*/
+
+    border-radius: 12px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    /*background-color: #ececec;*/
+
+    /*backdrop-filter: blur(20px) saturate(180%);*/
+    /*-webkit-backdrop-filter: blur(20px) saturate(180%);*/
+    /*background: rgba(255, 255, 255, 0.2); !* матовость *!*/
+
+    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+    background: #F6F9FE;
+}
+
+[data-theme='dark'] body{
+    background: linear-gradient(135deg, #1f1c2c 0%, #2d2c3c 100%);
+    background-attachment: fixed;
+}
+
+
+[data-theme='dark'] .sidebar{
+    background-color: #171717;
+
+}
+
+
+    [data-theme='dark'] .sidebar-link {
+
+        color: #fff;
+
+    }
+
+    [data-theme='dark'] .sidebar-link:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    [data-theme='dark'] .sidebar-link.active {
+        background-color: rgba(10, 132, 255, 0.15);
+        color: #0a84ff;
+    }
+
+
+
+
+/* Основной фон страницы */
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(145deg, #e8ecf4, #fdfdfd);
+    color: #111;
+    height: 100vh;
+    display: flex;
+}
+
+/* Сайдбар */
+
+
+/* Контент справа */
+.content {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Вопрос */
+.question {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 30px;
+}
+
+/* Сетка карточек */
+.options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* Карточка варианта */
+.option-card {
+    background: white;
+    border-radius: 18px;
+    padding: 20px;
+    font-size: 20px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.option-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.option-card.correct {
+    background-color: #daf5da;
+    border: 2px solid #28a745;
+}
+
+.option-card.incorrect {
+    background-color: #fce4e4;
+    border: 2px solid #f44336;
+}

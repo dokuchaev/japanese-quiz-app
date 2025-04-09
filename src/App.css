@@ -1,0 +1,86 @@
+:root {
+  --bg-color: #ffffff;
+  --text-color: #222222;
+  --card-bg: #f4f4f4;
+}
+
+[data-theme='dark'] {
+  --bg-color: #121212;
+  --text-color: #f1f1f1;
+  --card-bg: #1e1e1e;
+}
+
+body {
+  color: var(--text-color);
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "San Francisco", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  transition: background 0.3s ease, color 0.3s ease;
+
+  background: radial-gradient(circle at 20% 30%, #f6d365, transparent 25%),
+  radial-gradient(circle at 80% 40%, #fda085, transparent 25%),
+  radial-gradient(circle at 50% 80%, #a18cd1, transparent 25%),
+  linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+  background-blend-mode: overlay;
+  background-attachment: fixed;
+
+  /*background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);*/
+
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+
+
+  background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+  background-attachment: fixed;
+}
+
+
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.subtitle{
+  font-size: 24px;
+}
