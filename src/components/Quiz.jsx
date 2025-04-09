@@ -394,6 +394,7 @@ const Quiz = () => {
                   borderRadius: "8px",
                   border: "1px solid #ccc",
                   marginBottom: "20px",
+                  marginRight: "10px",
                 }}
                 onChange={handleAnswerChange}
               />
