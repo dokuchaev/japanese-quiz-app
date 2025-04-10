@@ -18,7 +18,7 @@
 
 
 .progressBar{
-    height: 10px;
+    height: 7px;
     background-color: #efefef;
     border-radius: 5px;
     overflow: hidden;
@@ -104,7 +104,7 @@
     border-radius: 12px;
     overflow: hidden;
     display: grid;
-    grid-template-columns: 283px 500px;
+    grid-template-columns: 233px 500px;
 }
 
 /* Заголовок */

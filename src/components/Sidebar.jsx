@@ -11,7 +11,7 @@ const Sidebar = () => {
     { key: 'dakuten', label: 'ガ Дакутен/Хандакутэн' },
     { key: 'allkana', label: 'え Вся кана' },
     { key: 'numbers', label: '三 Числительные' },
-    { key: 'hiraganaQuiz', label: 'ぬ Кана ввод' }  // Новый пункт для квиза
+    { key: 'hiraganaInput', label: 'ぬ Кана ввод' }  // Новый пункт для квиза
   ];
 
   return (
