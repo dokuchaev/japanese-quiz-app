@@ -85,3 +85,67 @@ body {
 .subtitle{
   font-size: 24px;
 }
+
+
+
+@media (max-width: 767px) {
+
+  #root{
+    width: 100%;
+    max-width: 100%;
+  }
+  .sidebar {
+    display: none;
+  }
+
+  .mobile-view {
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  .slide-in {
+    animation: slideIn 0.3s ease forwards;
+  }
+
+  .slide-out {
+    animation: slideOut 0.3s ease forwards;
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0%);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideOut {
+    from {
+      transform: translateX(0%);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+  }
+
+  .mobile-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 1rem;
+  }
+
+  .back-button {
+    background-color: #eee;
+    border: none;
+    padding: 10px;
+    font-size: 16px;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+}

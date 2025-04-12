@@ -8,10 +8,13 @@ const Sidebar = () => {
   const quizzes = [
     { key: 'hiragana', label: 'あ Хирагана' },
     { key: 'katakana', label: 'シ Катакана' },
-    { key: 'dakuten', label: 'ガ Дакутен/Хандакутэн' },
+    { key: 'dakuten', label: 'ガ Дакутэн/Хандакутэн' },
     { key: 'allkana', label: 'え Вся кана' },
     { key: 'numbers', label: '三 Числительные' },
-    { key: 'hiraganaInput', label: 'ぬ Кана ввод' }  // Новый пункт для квиза
+    { key: 'hiraganaInput', label: 'ぬ Хираган ввод' },
+    { key: 'katakanaInput', label: 'ぬ Катакана ввод' },
+    { key: 'dakutenInput', label: 'ぬ Дакутэн/Хандакутэн ввод' },
+    { key: 'numbersInput', label: '四 Числительные ввод' }  // Новый пункт для квиза
   ];
 
   return (

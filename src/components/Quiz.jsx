@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import CountdownOverlay from "./CountdownOverlay";
 import { hiraganaData } from "../data/hiragana";
 import { katakanaData } from "../data/katakana";
 import { dakutenData } from "../data/dakuten";
 import { numbersData } from "../data/numbers";
 import '../Quiz.css';
-import '../CountdownModal.css';
+
 
 const quizSources = {
   hiragana: hiraganaData,
@@ -13,6 +14,9 @@ const quizSources = {
   dakuten: dakutenData,
   numbers: numbersData,
   hiraganaInput: hiraganaData,
+  katakanaInput: katakanaData,
+  dakutenInput: dakutenData,
+  numbersInput: numbersData,
   allkana: [...hiraganaData, ...katakanaData, ...dakutenData],
 };
 
@@ -99,6 +103,7 @@ const Quiz = () => {
   };
 
   const startQuiz = (numQuestionsToSet, filterFn = null) => {
+    setIsStarted(false); // ⬅️ добавляем это!
     setPendingStartParams({ numQuestionsToSet, filterFn });
     setShowCountdown(true);
     setCountdown(3);
@@ -113,24 +118,23 @@ const Quiz = () => {
           setCountdown((prev) => {
             if (prev === 1) {
               clearInterval(countdownInterval);
-              setCountdown(0); // Показываем スタート!
+              setCountdown(0);
               setTimeout(() => {
                 setShowCountdown(false);
                 if (pendingStartParams) {
                   realStartQuiz(pendingStartParams.numQuestionsToSet, pendingStartParams.filterFn);
                   setPendingStartParams(null);
                 }
-              }, 1000); // даём время на анимацию スタート!
+              }, 1000);
             }
             return prev - 1;
           });
-        }, 1000);
+        }, 800);
       }
     }
 
     return () => clearInterval(countdownInterval);
   }, [showCountdown, countdown]);
-
 
   useEffect(() => {
     if (isStarted && !showResults && !isPaused) {
@@ -146,7 +150,7 @@ const Quiz = () => {
             },
           };
         });
-      }, 1000);
+      }, 800);
     }
     return () => clearInterval(timerRef.current);
   }, [isStarted, showResults, quiz, isPaused]);
@@ -232,15 +236,16 @@ const Quiz = () => {
   };
 
   const handleSubmitAnswer = () => {
-    const correct = questions[currentQuestionIndex].correctAnswer;
-    const isCorrect = userAnswer.trim().toLowerCase() === correct.trim().toLowerCase();
+    const answer = userAnswer.trim().toLowerCase(); // ⬅️ сохраняем перед таймером
+    const correct = String(questions[currentQuestionIndex].correctAnswer).trim().toLowerCase();
+    const isCorrect = answer === correct;
 
     setQuizStates((prev) => {
       const quizData = prev[quiz];
       const updatedIncorrects = !isCorrect
           ? [...quizData.incorrectAnswers, {
             question: questions[currentQuestionIndex].question,
-            yourAnswer: userAnswer,
+            yourAnswer: answer,
             correctAnswer: correct,
           }]
           : quizData.incorrectAnswers;
@@ -279,6 +284,7 @@ const Quiz = () => {
             [quiz]: {
               ...quizData,
               showResults: true,
+              userAnswer: "",
             },
           };
         }
@@ -286,29 +292,28 @@ const Quiz = () => {
     }, 700);
   };
 
+
   if (!quizSources[quiz]) return <p>Квиз не найден.</p>;
 
   if (!isStarted) {
     return (
         <div style={{ textAlign: "center", marginTop: "40px" }}>
-          {showCountdown && (
-              <div className="countdown-overlay">
-                <div key={countdown} className="countdown-number">
-                  {countdown > 0 ? countdown : "スタート!"}
-                </div>
-              </div>
-          )}
+          {showCountdown && <CountdownOverlay countdown={countdown} />}
 
 
           <h2>Вы готовы начать тест по {
             quiz === 'hiragana' ? 'хирагане' :
+                quiz === 'hiraganaInput' ? 'хирагане (ввод)' :
                 quiz === 'katakana' ? 'катакане' :
-                    quiz === 'dakuten' ? 'дакутен/хандакутен' :
+                    quiz === 'katakanaInput' ? 'катакане (ввод)' :
+                    quiz === 'dakuten' ? 'дакутэн/хандакутэн' :
+                        quiz === 'dakutenInput' ? 'дакутэн/хандакутэн (ввод)' :
                         quiz === 'allkana' ? 'всем символам каны' :
                             quiz === 'numbers' ? 'числительным' :
-                                'кане (ввод)'}</h2>
+                                quiz === 'numbersInput' ? 'числительным (ввод)' :
+                                    'кане (ввод)'}</h2>
 
-          {quiz === "numbers" ? (
+          {(quiz === "numbers" || quiz === "numbersInput") ? (
               <div className="button-wrapper">
                 <button className="quiz-button" onClick={() => startQuiz(20, (q) => +q.correctAnswer <= 10)}>
                   От 1 до 10
@@ -319,7 +324,9 @@ const Quiz = () => {
               </div>
           ) : (
               <div className="button-wrapper">
-                <button className="quiz-button" onClick={() => startQuiz(15)}>15 случайных вопросов</button>
+                <button className="quiz-button" onClick={() => startQuiz(quiz === 'allkana' ? 30 : 15)}>
+                  {quiz === 'allkana' ? "30 случайных вопросов" : "15 случайных вопросов"}
+                </button>
                 <button className="quiz-button" onClick={() => startQuiz(null)}>Все вопросы</button>
               </div>
           )}
@@ -370,20 +377,37 @@ const Quiz = () => {
               <div style={{ marginTop: "30px" }}>
                 <div className='title-reload'>Хотите попробовать снова?</div>
                 <div className="button-wrapper">
-                  <button className="quiz-button" onClick={() => startQuiz(15)}>15 случайных вопросов</button>
-                  <button className="quiz-button" onClick={() => startQuiz(null)}>Все вопросы</button>
+                  {(quiz === "numbers" || quiz === "numbersInput") ? (
+                      <>
+                        <button className="quiz-button" onClick={() => startQuiz(20, (q) => +q.correctAnswer <= 10)}>
+                          От 1 до 10
+                        </button>
+                        <button className="quiz-button" onClick={() => startQuiz(20, (q) => +q.correctAnswer > 10)}>
+                          От 10 до 100
+                        </button>
+                      </>
+                  ) : (
+                      <>
+                        <button className="quiz-button" onClick={() => startQuiz(quiz === 'allkana' ? 30 : 15)}>
+                          {quiz === 'allkana' ? "30 случайных вопросов" : "15 случайных вопросов"}
+                        </button>
+                        <button className="quiz-button" onClick={() => startQuiz(null)}>Все вопросы</button>
+                      </>
+                  )}
                 </div>
               </div>
             </div>
         ) : (
             <>
               <div className={`qiuz-question${quiz === "numbers" ? " qiuz-question-number" : ""}`}>
-                {quiz === "hiraganaInput" && `${currentQuestion.question}`}
-                {quiz === "numbers" && `${currentQuestion.question} (${currentQuestion.reading})`}
-                {quiz !== "hiraganaInput" && quiz !== "numbers" && currentQuestion.question}
+                {quiz === "hiraganaInput" || quiz === "numbersInput" || quiz === "katakanaInput" || quiz === "dakutenInput"
+                    ? `${currentQuestion.question}`
+                    : quiz === "numbers"
+                        ? `${currentQuestion.question} (${currentQuestion.reading})`
+                        : currentQuestion.question}
               </div>
 
-              {quiz === "hiraganaInput" ? (
+              {quiz === "hiraganaInput" || quiz === "numbersInput" || quiz === "katakanaInput" || quiz === "dakutenInput" ? (
                   <div style={{ textAlign: "center", marginBottom: "30px" }}>
                     <input
                         type="text"

@@ -251,3 +251,13 @@ display: flex;
 .mistakes-title{
     text-align: center;
 }
+
+
+@media(max-width: 787px){
+    .quiz-container{
+        grid-template-columns: 1fr;
+    }
+    .quiz-questions{
+        max-height: 100%;
+    }
+}
