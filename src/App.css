@@ -86,18 +86,34 @@ body {
   font-size: 24px;
 }
 
-
+.mobile-description{
+  display: none;
+}
 
 @media (max-width: 767px) {
-
+  body{
+    align-items: flex-start;
+  }
   #root{
     width: 100%;
     max-width: 100%;
   }
+  h1{
+    font-size: 18px;
+  }
+.desktop-description{
+  display: none;
+}
+.mobile-description{
+  display: block;
+  font-size: 14px;
+}
   .sidebar {
     display: none;
   }
-
+.subtitle{
+  margin-bottom: 12px;
+}
   .mobile-view {
     position: relative;
     overflow-x: hidden;
@@ -133,12 +149,6 @@ body {
     }
   }
 
-  .mobile-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 1rem;
-  }
 
   .back-button {
     background-color: #eee;
@@ -148,4 +158,5 @@ body {
     margin-bottom: 10px;
     cursor: pointer;
   }
+
 }

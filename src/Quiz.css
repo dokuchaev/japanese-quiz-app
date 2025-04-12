@@ -120,6 +120,7 @@
     padding: 25px;
     max-height: 481px;
     overflow: scroll;
+
 }
 /* Вопрос */
 .quiz-question {
@@ -256,8 +257,32 @@ display: flex;
 @media(max-width: 787px){
     .quiz-container{
         grid-template-columns: 1fr;
+margin-top: 25px;
     }
+
+    .quiz-container{
+        box-shadow: none;
+        border-radius: 0;
+        overflow: visible;
+    }
+
     .quiz-questions{
+        box-shadow: 0 0 2px rgb(58 66 75 / 10%), 0 2px 4px rgb(58 66 75 / 20%);
+        border-radius: 12px;
+        overflow: hidden;
         max-height: 100%;
+        padding: 20px 15px;
+    }
+
+    .mobile-buttons{
+        display: grid
+    ;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px;
+    }
+    .quiz-button{
+        margin-top: 0;
+        height: 83px;
+        width: 100%;
     }
 }

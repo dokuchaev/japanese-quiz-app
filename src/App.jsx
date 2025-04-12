@@ -1,5 +1,5 @@
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Quiz from './components/Quiz';
 import Home from './components/Home';
@@ -54,7 +54,20 @@ const App = () => {
                 >
                     {isMobile && showMenu ? (
                         <div className="mobile-menu">
-                            <h2>Выберите тест:</h2>
+                            <div>
+                                <div className="subtitle">こんにちは!</div>
+                                <h1>Добро пожаловать в японский квиз!</h1>
+                                <p className="desktop-description">Выберите один из тестов в меню слева, чтобы начать
+                                    изучение японского
+                                    языка.</p>
+                                <p className="mobile-description">Выберите один из тестов, чтобы начать изучение
+                                    японского
+                                    языка.</p>
+                                <div className="subtitle">がんばって！</div>
+                            </div>
+
+
+                            <div className="mobile-buttons">
                             {[
                                 ['hiragana', 'あ Хирагана'],
                                 ['katakana', 'シ Катакана'],
@@ -70,6 +83,7 @@ const App = () => {
                                     {label}
                                 </button>
                             ))}
+                            </div>
                         </div>
                     ) : (
                         <>
