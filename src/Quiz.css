@@ -66,6 +66,7 @@
     /*box-shadow: 0 4px 10px rgba(0,0,0,0.1);*/
     /*background-color: #d0eefd;*/
     background: #FFDC60;
+    color: #000;
     transition: 0.2s ease-in-out;
 }
 
@@ -96,6 +97,13 @@
     background-color: #d4d4d8;
 }
 
+.quiz-cards{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    max-width: 400px;
+    margin: 0 auto;
+}
 
 /* Основной фон */
 .quiz-container {
@@ -273,16 +281,18 @@ margin-top: 25px;
         max-height: 100%;
         padding: 20px 15px;
     }
-
-    .mobile-buttons{
-        display: grid
-    ;
-        grid-template-columns: 1fr 1fr;
-        gap: 5px;
-    }
-    .quiz-button{
+   .mobile-buttons .quiz-button{
         margin-top: 0;
-        height: 83px;
+        height: 85px;
         width: 100%;
+        padding: 12px 12px;
+    }
+
+    .button-wrapper{
+        flex-direction: column;
+        gap: 10px;
+    }
+    .quiz-cards{
+        gap: 6px
     }
 }

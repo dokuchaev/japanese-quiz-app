@@ -428,14 +428,7 @@ const Quiz = () => {
                     </button>
                   </div>
               ) : (
-                  <div
-                      style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(2, 1fr)",
-                        gap: "16px",
-                        maxWidth: "400px",
-                        margin: "0 auto",
-                      }}
+                  <div className="quiz-cards"
                   >
                     {currentQuestion.options.map((option, index) => {
                       let bg = "#e6effe";

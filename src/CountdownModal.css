@@ -36,3 +36,10 @@
         transform: scale(0.9);
     }
 }
+
+
+@media (max-width: 767px){
+    .countdown-number{
+        font-size: 5rem;
+    }
+}

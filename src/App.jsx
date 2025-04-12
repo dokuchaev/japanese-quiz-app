@@ -43,6 +43,11 @@ const App = () => {
 
     return (
         <div>
+            {isMobile && isQuizPage && (
+                <button className="back-button" onClick={goBackToMenu}>
+                    ← Назад к тестам
+                </button>
+            )}
             <ThemeToggle />
             <div className="quiz-container">
                 {!isMobile && <Sidebar />}
@@ -69,15 +74,15 @@ const App = () => {
 
                             <div className="mobile-buttons">
                             {[
-                                ['hiragana', 'あ Хирагана'],
-                                ['katakana', 'シ Катакана'],
-                                ['dakuten', 'ガ Дакутэн/Хандакутэн'],
-                                ['allkana', 'え Вся кана'],
-                                ['numbers', '三 Числительные'],
-                                ['hiraganaInput', 'ぬ Хираган ввод'],
-                                ['katakanaInput', 'ぬ Катакана ввод'],
-                                ['dakutenInput', 'ぬ Дакутэн/Хандакутэн ввод'],
-                                ['numbersInput', '四 Числительные ввод'],
+                                ['hiragana', <><span>あ</span> Хирагана</>],
+                                ['katakana', <><span>シ</span> Катакана</>],
+                                ['dakuten', <><span>ガ</span> Дакутэн/Хандакутэн</>],
+                                ['allkana', <><span>え</span> Вся кана</>],
+                                ['numbers', <><span>三</span> Числительные</>],
+                                ['hiraganaInput', <><span>ぬ</span> Хирагана ввод</>],
+                                ['katakanaInput', <><span>ぬ</span> Катакана ввод</>],
+                                ['dakutenInput', <><span>ぬ</span> Дакутэн/Хандакутэн ввод</>],
+                                ['numbersInput', <><span>四</span> Числительные ввод</>],
                             ].map(([key, label]) => (
                                 <button key={key} className="quiz-button" onClick={() => startQuiz(key)}>
                                     {label}
@@ -87,11 +92,7 @@ const App = () => {
                         </div>
                     ) : (
                         <>
-                            {isMobile && isQuizPage && (
-                                <button className="back-button" onClick={goBackToMenu}>
-                                    ← Назад к тестам
-                                </button>
-                            )}
+
                             <Routes>
                                 <Route path="/" element={<Home />} />
                                 <Route path="/quiz/:quiz" element={<Quiz />} />
