@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar';
 import Quiz from './components/Quiz';
 import Home from './components/Home';
 import ThemeToggle from './components/ThemeToggle';
+import HiraganaTable from './components/HiraganaTable';
 import './App.css';
 
 const App = () => {
@@ -106,6 +107,7 @@ const App = () => {
                             <Routes>
                                 <Route path="/" element={<Home />} />
                                 <Route path="/quiz/:quiz" element={<Quiz />} />
+                                <Route path="/quiz/hiragana/table" element={<HiraganaTable />} />
                             </Routes>
                         </>
                     )}

@@ -328,6 +328,13 @@ const Quiz = () => {
                   {quiz === 'allkana' ? "30 случайных вопросов" : "15 случайных вопросов"}
                 </button>
                 <button className="quiz-button" onClick={() => startQuiz(null)}>Все вопросы</button>
+                <button
+                    className="quiz-button"
+                    onClick={() => navigate('/quiz/hiragana/table')}
+                    style={{marginBottom: '1rem'}}
+                >
+                  Таблица Хираганы
+                </button>
               </div>
           )}
         </div>
