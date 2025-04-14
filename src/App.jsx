@@ -21,6 +21,16 @@ const App = () => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    useEffect(() => {
+        if (isMobile) {
+            if (location.pathname === '/') {
+                setShowMenu(true);
+            } else if (location.pathname.startsWith('/quiz/')) {
+                setShowMenu(false);
+            }
+        }
+    }, [location.pathname, isMobile]);
+
     const startQuiz = (path) => {
         setSlideDirection('out');
         setTimeout(() => {
