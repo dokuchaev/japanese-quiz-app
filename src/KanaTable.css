@@ -1,0 +1,113 @@
+.hiragana-table-container {
+    text-align: center;
+}
+
+.table {
+    display: inline-block;
+}
+
+.table-row {
+    display: flex;
+}
+
+.table-cell {
+    width: 60px;
+    height: 60px;
+    margin: 2px;
+    border: 1px solid #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    cursor: pointer;
+}
+.empty-symbol {
+    width: 1em; /* Задает ширину пустой ячейки, чтобы она не "сжалась" */
+    visibility: hidden; /* Скрывает пустой символ */
+}
+.symbol-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex
+;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: #fff;
+    color: #000;
+    padding: 20px 20px;
+
+    border-radius: 10px;
+    text-align: center;
+    position: relative;
+}
+
+.modal-content h3{
+    font-size: 30px;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.stroke-image {
+    width: 160px;
+    margin: 10px 0;
+}
+
+.audio-player {
+    width: 100%;
+    height: 32px;
+}
+
+.close-button {
+    position: absolute;
+    right: 0;
+    top: -30px;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+.kana-table-container .back-button{
+    display: block;
+    margin: 0 auto;
+    margin-top: 20px
+}
+
+.kana-table-container .subtitle{
+    font-size: 16px;
+    max-width: 360px;
+    margin: 0 auto;
+    margin-bottom: 25px;
+}
+
+.close-button svg{
+   width: 22px;
+    height: 22px;
+}
+
+
+@media(max-width:767px){
+    .kana-table-container .back-button{
+        display: none;
+    }
+    .table-cell {
+        width: 54px;
+        height: 54px;
+    }
+}
