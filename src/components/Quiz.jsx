@@ -297,21 +297,10 @@ const Quiz = () => {
 
   if (!isStarted) {
     return (
-        <div style={{ textAlign: "center", marginTop: "40px" }}>
+        <div style={{ textAlign: "center", marginTop: "0px" }}>
           {showCountdown && <CountdownOverlay countdown={countdown} />}
 
 
-          <h2>Вы готовы начать тест по {
-            quiz === 'hiragana' ? 'хирагане' :
-                quiz === 'hiraganaInput' ? 'хирагане (ввод)' :
-                quiz === 'katakana' ? 'катакане' :
-                    quiz === 'katakanaInput' ? 'катакане (ввод)' :
-                    quiz === 'dakuten' ? 'дакутэн/хандакутэн' :
-                        quiz === 'dakutenInput' ? 'дакутэн/хандакутэн (ввод)' :
-                        quiz === 'allkana' ? 'всем символам каны' :
-                            quiz === 'numbers' ? 'числительным' :
-                                quiz === 'numbersInput' ? 'числительным (ввод)' :
-                                    'кане (ввод)'}</h2>
 
           {(quiz === "numbers" || quiz === "numbersInput") ? (
               <div className="button-wrapper">
@@ -323,30 +312,66 @@ const Quiz = () => {
                 </button>
               </div>
           ) : (
-              <div className="button-wrapper">
-                <button className="quiz-button" onClick={() => startQuiz(quiz === 'allkana' ? 30 : 15)}>
-                  {quiz === 'allkana' ? "30 случайных вопросов" : "15 случайных вопросов"}
-                </button>
-                <button className="quiz-button" onClick={() => startQuiz(null)}>Все вопросы</button>
+              <div className="button-wrapper button-wrapper-flex">
                 {quiz === 'hiragana' && (
-                    <button
-                        className="quiz-button"
-                        onClick={() => navigate('/quiz/hiragana/table', { state: { fromQuiz: 'hiragana' } })}
-                        style={{ marginBottom: '1rem' }}
-                    >
-                      Таблица Хираганы
-                    </button>
+                    <div>
+                      <h3>Хотите повторить хирагану?</h3>
+                      <button
+                          className="quiz-button"
+                          onClick={() => navigate('/quiz/hiragana/table', {state: {fromQuiz: 'hiragana'}})}
+                          style={{marginBottom: '1rem'}}
+                      >
+                        Таблица Хираганы
+                      </button>
+                    </div>
                 )}
 
                 {quiz === 'katakana' && (
-                    <button
-                        className="quiz-button"
-                        onClick={() => navigate('/quiz/katakana/table', { state: { fromQuiz: 'katakana' } })}
-                        style={{ marginBottom: '1rem' }}
-                    >
-                      Таблица Катаканы
-                    </button>
+                    <div>
+                      <h3>Хотите повторить катакану?</h3>
+                      <button
+                          className="quiz-button"
+                          onClick={() => navigate('/quiz/katakana/table', {state: {fromQuiz: 'katakana'}})}
+                          style={{marginBottom: '1rem'}}
+                      >
+                        Таблица Катаканы
+                      </button>
+                    </div>
                 )}
+                {quiz === 'dakuten' && (
+                    <div>
+                      <h3>Хотите повторить дакутен/хандакутэн?</h3>
+                      <button
+                          className="quiz-button"
+                          onClick={() => navigate('/quiz/dakuten/table', {state: {fromQuiz: 'dakuten'}})}
+                          style={{marginBottom: '1rem'}}
+                      >
+                        Таблица Дакутен/хандакутэн
+                      </button>
+                    </div>
+                )}
+                <h3>Тест по {
+                  quiz === 'hiragana' ? 'хирагане' :
+                      quiz === 'hiraganaInput' ? 'хирагане (ввод)' :
+                          quiz === 'katakana' ? 'катакане' :
+                              quiz === 'katakanaInput' ? 'катакане (ввод)' :
+                                  quiz === 'dakuten' ? 'дакутэн/хандакутэн' :
+                                      quiz === 'dakutenInput' ? 'дакутэн/хандакутэн (ввод)' :
+                                          quiz === 'allkana' ? 'всем символам каны' :
+                                              quiz === 'numbers' ? 'числительным?' :
+                                                  quiz === 'numbersInput' ? 'числительным (ввод)' :
+                                                      'кане (ввод)'}</h3>
+                <div className="button-wrapper-flex-btns">
+                  <button className="quiz-button" onClick={() => startQuiz(quiz === 'allkana' ? 30 : 15)}>
+                    {quiz === 'allkana' ? "30 случайных вопросов" : "15 случайных вопросов"}
+                  </button>
+                  <button className="quiz-button" onClick={() => startQuiz(null)}>Все вопросы</button>
+                </div>
+
+
+
+
+
               </div>
           )}
         </div>
@@ -368,7 +393,7 @@ const Quiz = () => {
                }}
           />
         </div>
-        <p style={{ fontSize: "14px", textAlign: "right", marginTop: "4px" }}>
+        <p style={{fontSize: "14px", textAlign: "right", marginTop: "4px"}}>
           Вопрос {currentQuestionIndex + 1} из {questions.length}
           <span style={{ float: "left" }}>⏱️ {formatTime(timeElapsed)}</span>
         </p>

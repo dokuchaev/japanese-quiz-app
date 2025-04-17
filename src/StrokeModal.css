@@ -24,12 +24,3 @@
     margin-top: 10px;
 }
 
-.close-button {
-    margin-top: 15px;
-    padding: 8px 12px;
-    background-color: #444;
-    border: none;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-}

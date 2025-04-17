@@ -1,7 +1,13 @@
-.hiragana-table-container {
+.hiragana-table-container{
+    text-align: left;
+}
+.hiragana-table-container h2{
+    margin-top: 0;
+    font-size: 20px;
+}
+.hiragana-table-content{
     text-align: center;
 }
-
 .table {
     display: inline-block;
 }
@@ -11,14 +17,14 @@
 }
 
 .table-cell {
-    width: 60px;
-    height: 60px;
+    width: 45px;
+    height: 32px;
     margin: 2px;
     border: 1px solid #ccc;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 28px;
+    font-size: 22px;
     cursor: pointer;
 }
 .empty-symbol {
@@ -101,13 +107,49 @@
     height: 22px;
 }
 
+.header-cell{
+    border: none;
+    font-size: 18px;
+    margin: 3px;
+}
+
+.corner-cell {
+    border: none;
+    height: auto;
+    width: 20px;
+}
+
+.header-row .header-cell{
+    height: auto;
+}
+
+.vertical-label {
+    width: 20px;
+}
+
+.btn-link{
+    border:none;
+    background: none;
+    color: #007aff;
+    cursor: pointer;
+}
 
 @media(max-width:767px){
     .kana-table-container .back-button{
         display: none;
     }
     .table-cell {
-        width: 54px;
-        height: 54px;
+        width: 50px;
+        height: 50px;
+    }
+    .hiragana-table-container .back-button{
+        display: none;
+    }
+    .vertical-label {
+        width: 20px;
+    }
+    .corner-cell{
+        width: 20px;
+        height: 20px;
     }
 }

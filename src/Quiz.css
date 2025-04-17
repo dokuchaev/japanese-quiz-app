@@ -112,7 +112,7 @@
     border-radius: 12px;
     overflow: hidden;
     display: grid;
-    grid-template-columns: 233px 500px;
+    grid-template-columns: 278px 500px;
 }
 
 /* Заголовок */
@@ -126,7 +126,7 @@
 .quiz-questions{
     background: #fff;
     padding: 25px;
-    max-height: 481px;
+    max-height: 520px;
     overflow: scroll;
 
 }
@@ -230,6 +230,17 @@ display: flex;
     justify-content: center;
 }
 
+.button-wrapper-flex{
+    flex-direction: column;
+}
+.button-wrapper-flex-btns{
+    gap: 15px;
+    display: flex
+;
+    justify-content: center;
+}
+
+
 [data-theme='dark'] .quiz-questions {
     /*background: #39393b;*/
     background: #212121;
@@ -294,5 +305,15 @@ margin-top: 25px;
     }
     .quiz-cards{
         gap: 6px
+    }
+    .button-wrapper-flex-btns{
+        flex-direction: column;
+
+    }
+    .button-wrapper-flex{
+        gap: 0;
+    }
+    .quiz-button{
+        width: 100%;
     }
 }
