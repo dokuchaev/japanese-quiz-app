@@ -297,9 +297,14 @@ const Quiz = () => {
 
   if (!isStarted) {
     return (
-        <div style={{ textAlign: "center", marginTop: "0px" }}>
-          {showCountdown && <CountdownOverlay countdown={countdown} />}
+        <div style={{textAlign: "center", marginTop: "0px"}}>
+          {showCountdown && <CountdownOverlay countdown={countdown}/>}
 
+          {(quiz === 'numbers' || quiz === 'numbersInput') && (
+              <h3>
+                {quiz === 'numbers' ? 'Тест по числительным' : 'Тест по числительным (ввод)'}
+              </h3>
+          )}
 
 
           {(quiz === "numbers" || quiz === "numbersInput") ? (
@@ -350,28 +355,27 @@ const Quiz = () => {
                       </button>
                     </div>
                 )}
-                <h3>Тест по {
-                  quiz === 'hiragana' ? 'хирагане' :
-                      quiz === 'hiraganaInput' ? 'хирагане (ввод)' :
-                          quiz === 'katakana' ? 'катакане' :
-                              quiz === 'katakanaInput' ? 'катакане (ввод)' :
-                                  quiz === 'dakuten' ? 'дакутэн/хандакутэн' :
-                                      quiz === 'dakutenInput' ? 'дакутэн/хандакутэн (ввод)' :
-                                          quiz === 'allkana' ? 'всем символам каны' :
-                                              quiz === 'numbers' ? 'числительным?' :
-                                                  quiz === 'numbersInput' ? 'числительным (ввод)' :
-                                                      'кане (ввод)'}</h3>
-                <div className="button-wrapper-flex-btns">
-                  <button className="quiz-button" onClick={() => startQuiz(quiz === 'allkana' ? 30 : 15)}>
-                    {quiz === 'allkana' ? "30 случайных вопросов" : "15 случайных вопросов"}
-                  </button>
-                  <button className="quiz-button" onClick={() => startQuiz(null)}>Все вопросы</button>
+                <div>
+                  <h3>Тест по {
+                    quiz === 'hiragana' ? 'хирагане' :
+                        quiz === 'hiraganaInput' ? 'хирагане (ввод)' :
+                            quiz === 'katakana' ? 'катакане' :
+                                quiz === 'katakanaInput' ? 'катакане (ввод)' :
+                                    quiz === 'dakuten' ? 'дакутэн/хандакутэн' :
+                                        quiz === 'dakutenInput' ? 'дакутэн/хандакутэн (ввод)' :
+                                            quiz === 'allkana' ? 'всем символам каны' :
+                                                quiz === 'allkanaInput' ? 'всем символам каны (ввод)' : ""}
+                                               </h3>
+
+                  <div className="button-wrapper-flex-btns">
+                    <button className="quiz-button" onClick={() => startQuiz(quiz === 'allkana' ? 30 : 15)}>
+                      {quiz === 'allkana' ? "30 случайных вопросов" : "15 случайных вопросов"}
+                    </button>
+                    <button className="quiz-button" onClick={() => startQuiz(null)}>Все вопросы</button>
+                  </div>
+
+
                 </div>
-
-
-
-
-
               </div>
           )}
         </div>
@@ -395,11 +399,11 @@ const Quiz = () => {
         </div>
         <p style={{fontSize: "14px", textAlign: "right", marginTop: "4px"}}>
           Вопрос {currentQuestionIndex + 1} из {questions.length}
-          <span style={{ float: "left" }}>⏱️ {formatTime(timeElapsed)}</span>
+          <span style={{float: "left"}}>⏱️ {formatTime(timeElapsed)}</span>
         </p>
 
         {showResults ? (
-            <div style={{ textAlign: "center", marginTop: "40px" }}>
+            <div style={{textAlign: "center", marginTop: "40px" }}>
               <h2>Результаты</h2>
               <p>👍 Правильно: {score.correct}</p>
               <p>👎 Неправильно: {score.incorrect}</p>
@@ -443,11 +447,13 @@ const Quiz = () => {
             </div>
         ) : (
             <>
-              <div className={`qiuz-question${quiz === "numbers" ? " qiuz-question-number" : ""}`}>
-                {quiz === "hiraganaInput" || quiz === "numbersInput" || quiz === "katakanaInput" || quiz === "dakutenInput"
+              <div className={`qiuz-question${quiz === "numbers" || quiz === "numbersInput" ? " qiuz-question-number"  : ""}`}>
+                {quiz === "hiraganaInput"  || quiz === "katakanaInput" || quiz === "dakutenInput"
                     ? `${currentQuestion.question}`
                     : quiz === "numbers"
                         ? `${currentQuestion.question} (${currentQuestion.reading})`
+                        : quiz === "numbersInput"
+                            ? `${currentQuestion.question} (${currentQuestion.reading})`
                         : currentQuestion.question}
               </div>
 

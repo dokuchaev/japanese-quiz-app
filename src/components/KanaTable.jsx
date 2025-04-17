@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../KanaTable.css';
 import StrokeModal from './StrokeModal';
@@ -6,7 +6,7 @@ import StrokeModal from './StrokeModal';
 // Импорт подписей для строк и столбцов
 const ROW_LABELS = ['a', 'i', 'u', 'e', 'o'];
 const DEFAULT_COLUMN_LABELS = ['-', 'k', 's', 't', 'n', 'h', 'm', 'y', 'r', 'w', ''];
-const DAKUTEN_COLUMN_LABELS = ['g', 'z', 'd', 'b', 'p'];
+const DAKUTEN_COLUMN_LABELS = ['g', 'z', 'd', 'b', 'p','g', 'z', 'd', 'b', 'p'];
 
 // Импорт сеток символов
 import { hiraganaGrid } from '../data/table/hiraganaGrid';
@@ -21,14 +21,16 @@ const KanaTable = () => {
     const navigate = useNavigate();
     const { quiz } = useParams();
 
-    // Определение нужной таблицы
+    const highlightRef = useRef(null);
+
+    // Выбор данных для таблицы
     let kanaGrid;
     let kanaType;
     let columnLabels;
 
     if (quiz.includes('dakuten')) {
         kanaGrid = dakutenGrid;
-        kanaType = 'hiragana';
+        kanaType = 'dakuten';
         columnLabels = DAKUTEN_COLUMN_LABELS;
     } else if (quiz.includes('katakana')) {
         kanaGrid = katakanaGrid;
@@ -39,6 +41,17 @@ const KanaTable = () => {
         kanaType = 'hiragana';
         columnLabels = DEFAULT_COLUMN_LABELS;
     }
+
+    // ⚡ Мигалка на первый символ
+    useEffect(() => {
+        if (highlightRef.current) {
+            highlightRef.current.classList.add('highlight-symbol');
+            const timeout = setTimeout(() => {
+                highlightRef.current.classList.remove('highlight-symbol');
+            }, 6000); // 3 раза по 2s
+            return () => clearTimeout(timeout);
+        }
+    }, []);
 
     const openModal = (symbol) => {
         if (!symbol) return;
@@ -59,11 +72,19 @@ const KanaTable = () => {
                 ← Назад к тесту
             </button>
             <div className="hiragana-table-content">
-                <h2> {kanaType === 'katakana' ? 'Катакана' : quiz.includes('dakuten') ? 'Дакутэн/Хандакутен' : 'Хирагана'}</h2>
-                <div className="table">
-                    {/* Горизонтальные romaji */}
+                <h2>
+                    {kanaType === 'katakana'
+                        ? 'Катакана'
+                        : quiz.includes('dakuten')
+                            ? 'Дакутэн/Хандакутэн'
+                            : 'Хирагана'}
+                </h2>
+                <div className="table-description">
+                    Нажмите на символ, чтобы увидеть его написание <br /> и услышать произношение
+                </div>
+                <div className={`table ${kanaType === "dakuten" ? " table-dakuten"  : ""}`}>
                     <div className="table-row header-row">
-                        <div className="table-cell corner-cell"/>
+                        <div className="table-cell corner-cell" />
                         {ROW_LABELS.map((romaji, idx) => (
                             <div className="table-cell header-cell" key={`header-${idx}`}>
                                 {romaji}
@@ -71,36 +92,40 @@ const KanaTable = () => {
                         ))}
                     </div>
 
-                    {/* Основная таблица */}
                     {kanaGrid.map((row, rowIndex) => (
                         <div className="table-row" key={rowIndex}>
                             <div className="table-cell header-cell vertical-label">
                                 {columnLabels[rowIndex]}
                             </div>
-                            {row.map((symbol, colIndex) => (
-                                <div className="table-cell" key={colIndex}>
-                                    {symbol ? (
-                                        <div
-                                            className="symbol-wrapper"
-                                            onClick={() => openModal(symbol)}
-                                            title="Нажмите, чтобы посмотреть написание и послушать звук"
-                                        >
-                                            <span className="symbol">{symbol}</span>
-                                        </div>
-                                    ) : (
-                                        <div className="empty"/>
-                                    )}
-                                </div>
-                            ))}
+                            {row.map((symbol, colIndex) => {
+                                const isFirstSymbol = rowIndex === 0 && colIndex === 0;
+                                return (
+                                    <div className="table-cell" key={colIndex}>
+                                        {symbol ? (
+                                            <div
+                                                className={`symbol-wrapper`}
+                                                ref={isFirstSymbol ? highlightRef : null}
+                                                onClick={() => openModal(symbol)}
+                                                title="Нажмите на символ, чтобы увидеть его написание и звучание"
+                                            >
+                                                <span className="symbol">{symbol}</span>
+                                            </div>
+                                        ) : (
+                                            <div className="empty" />
+                                        )}
+                                    </div>
+                                );
+                            })}
                         </div>
                     ))}
                 </div>
 
-
                 {selectedSymbol && (
                     <div className="modal-overlay" onClick={closeModal}>
                         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                            <h3>{selectedSymbol.symbol} - {selectedSymbol.romaji}</h3>
+                            <h3>
+                                {selectedSymbol.symbol} - {selectedSymbol.romaji}
+                            </h3>
                             <img
                                 src={`/strokes/${kanaType}/${selectedSymbol.romaji}.gif`}
                                 alt={`Stroke order for ${selectedSymbol.symbol}`}
@@ -114,14 +139,27 @@ const KanaTable = () => {
                                 Ваш браузер не поддерживает аудио.
                             </audio>
                             <button onClick={closeModal} className="close-button">
-                                <svg width="800px" height="800px" viewBox="-0.5 0 25 25" fill="none"
-                                     xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M3 21.32L21 3.32001" stroke="#ffffff" strokeWidth="1.5"
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"/>
-                                    <path d="M3 3.32001L21 21.32" stroke="#ffffff" strokeWidth="1.5"
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"/>
+                                <svg
+                                    width="800px"
+                                    height="800px"
+                                    viewBox="-0.5 0 25 25"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M3 21.32L21 3.32001"
+                                        stroke="#ffffff"
+                                        strokeWidth="1.5"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                    <path
+                                        d="M3 3.32001L21 21.32"
+                                        stroke="#ffffff"
+                                        strokeWidth="1.5"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
                                 </svg>
                             </button>
                         </div>
@@ -129,7 +167,7 @@ const KanaTable = () => {
                 )}
             </div>
         </div>
-            );
-            };
+    );
+};
 
-            export default KanaTable;
+export default KanaTable;

@@ -21,6 +21,7 @@
     position: relative;
     text-align: left;
     border-left: 3px solid transparent;
+    display: block;
 }
 
 .sidebar-link:hover {
@@ -91,35 +92,18 @@
 
 
 
-
-/* Основной фон страницы */
-body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: linear-gradient(145deg, #e8ecf4, #fdfdfd);
-    color: #111;
-    height: 100vh;
-    display: flex;
+.sidebar-group-title {
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    color: #555;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    opacity: 0.7;
+    text-align: left;
 }
 
-/* Сайдбар */
 
 
-/* Контент справа */
-.content {
-    flex: 1;
-    padding: 40px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-}
-
-/* Вопрос */
-.question {
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 30px;
-}
 
 /* Сетка карточек */
 .options {
@@ -171,3 +155,4 @@ body {
 
 
 }
+
