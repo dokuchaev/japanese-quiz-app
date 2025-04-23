@@ -5,11 +5,11 @@
     flex-direction: column;
 }
 
-
 /* Пункт меню */
 .sidebar-link {
     padding: 12px 10px;
-    margin-bottom: 8px;
+    margin-top: 4px;
+    margin-bottom: 4px;
     border-radius: 8px;
     border-bottom-left-radius: 0;
     border-top-left-radius: 0;
@@ -24,6 +24,7 @@
     display: block;
 }
 
+
 .sidebar-link:hover {
     border-left: 3px solid #007aff;
     background: rgba(58, 66, 75, 0.07);
@@ -31,8 +32,8 @@
 }
 
 .sidebar-link.active {
-    background: #e7efff;
-    color: #007aff; /* фирменный синий Apple */
+    background: rgba(58, 66, 75, 0.07);
+
     font-weight: 600;
     border-left: 3px solid #007aff;
 }
@@ -86,8 +87,8 @@
     }
 
     [data-theme='dark'] .sidebar-link.active {
-        background-color: rgba(10, 132, 255, 0.15);
-        color: #0a84ff;
+        color: #ffffff;
+        background-color: rgba(255, 255, 255, 0.05);
     }
 
 
@@ -100,6 +101,15 @@
     text-transform: uppercase;
     opacity: 0.7;
     text-align: left;
+    color: #007aff;
+    background: #e7efff;
+    border-radius: 8px;
+}
+
+[data-theme='dark'] .sidebar-group-title {
+    background-color: rgba(10, 132, 255, 0.15);
+    color: #0a84ff;
+    opacity: 1;
 }
 
 

@@ -165,3 +165,68 @@ body {
   }
 
 }
+
+
+
+
+
+
+
+/*/////*/
+.game-container {
+  padding: 20px;
+}
+
+.kana-table {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.kana-cell {
+  border: 2px dashed #ccc;
+  padding: 10px;
+  text-align: center;
+  background-color: #f8f8f8;
+  border-radius: 6px;
+  min-height: 60px;
+}
+
+.kana-cell.hovered {
+  background-color: #d0f0ff;
+}
+
+.romaji-label {
+  font-size: 14px;
+  color: #666;
+}
+
+.kana-symbol {
+  font-size: 24px;
+}
+
+.kana-placeholder {
+  font-size: 20px;
+  color: #aaa;
+}
+
+.kana-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.kana-card {
+  padding: 10px 14px;
+  background-color: #fff;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  font-size: 20px;
+  user-select: none;
+  transition: box-shadow 0.2s;
+}
+
+.kana-card:hover {
+  box-shadow: 0 0 4px rgba(0,0,0,0.2);
+}

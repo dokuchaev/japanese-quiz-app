@@ -300,21 +300,31 @@ const Quiz = () => {
         <div style={{textAlign: "center", marginTop: "0px"}}>
           {showCountdown && <CountdownOverlay countdown={countdown}/>}
 
-          {(quiz === 'numbers' || quiz === 'numbersInput') && (
-              <h3>
-                {quiz === 'numbers' ? 'Тест по числительным' : 'Тест по числительным (ввод)'}
-              </h3>
-          )}
-
 
           {(quiz === "numbers" || quiz === "numbersInput") ? (
-              <div className="button-wrapper">
-                <button className="quiz-button" onClick={() => startQuiz(20, (q) => +q.correctAnswer <= 10)}>
-                  От 1 до 10
-                </button>
-                <button className="quiz-button" onClick={() => startQuiz(20, (q) => +q.correctAnswer > 10)}>
-                  От 10 до 100
-                </button>
+              <div className="button-wrapper button-wrapper-flex">
+                <div>
+                  <h3>Хотите повторить числительные?</h3>
+                  <button
+                      className="quiz-button"
+                      onClick={() => navigate('/quiz/numbers/table', { state: { fromQuiz: 'numbers' } })}
+                      style={{ marginBottom: '1rem' }}
+                  >
+                    Таблица числительных
+                  </button>
+                </div>
+
+                <div>
+                  <h3>{quiz === 'numbers' ? 'Тест по числительным' : 'Тест по числительным (ввод)'}</h3>
+                  <div className="button-wrapper-flex-btns">
+                    <button className="quiz-button" onClick={() => startQuiz(20, (q) => +q.correctAnswer <= 10)}>
+                      От 1 до 10
+                    </button>
+                    <button className="quiz-button" onClick={() => startQuiz(20, (q) => +q.correctAnswer > 10)}>
+                      От 10 до 100
+                    </button>
+                  </div>
+                </div>
               </div>
           ) : (
               <div className="button-wrapper button-wrapper-flex">

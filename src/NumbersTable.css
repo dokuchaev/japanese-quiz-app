@@ -1,0 +1,38 @@
+
+.table-numbers-row{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+}
+.table-numbers-cell{
+    margin: 2px;
+    border: 1px solid #ccc;
+text-align: center;
+    font-size: 22px;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 6px;
+    transition: ease-in-out .2s;
+}
+
+.btn-sound{
+    background: #FFDC60;
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    margin-top: 5px;
+    transition: ease-in-out .2s;
+}
+
+.btn-sound svg{
+    width: 20px;
+    height: 20px;
+}
+
+.btn-sound:hover {
+    transform: scale(1.1);
+    transition: ease-in-out .2s;
+}

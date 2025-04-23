@@ -5,6 +5,8 @@ import Quiz from './components/Quiz';
 import Home from './components/Home';
 import ThemeToggle from './components/ThemeToggle';
 import KanaTable from './components/KanaTable';
+import NumbersTable from "./components/NumbersTable";
+
 
 import './App.css';
 
@@ -109,6 +111,7 @@ const App = () => {
                                 <Route path="/" element={<Home />} />
                                 <Route path="/quiz/:quiz" element={<Quiz />} />
                                 <Route path="/quiz/:quiz/table" element={<KanaTable />} />
+                                <Route path="/quiz/numbers/table" element={<NumbersTable />} />
                             </Routes>
                         </>
                     )}

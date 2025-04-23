@@ -65,7 +65,7 @@
     background: #fff;
     color: #000;
     padding: 20px 20px;
-
+    min-width: 200px;
     border-radius: 10px;
     text-align: center;
     position: relative;
@@ -74,7 +74,7 @@
 .modal-content h3{
     font-size: 30px;
     margin-top: 0;
-    margin-bottom: 0;
+    margin-bottom: 15px;
 }
 
 .stroke-image {
@@ -170,7 +170,34 @@
     box-shadow: 0 0 0 2px #FFDC60;
 }
 
+.audio-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    margin-top: 10px;
+    transition: transform 0.2s ease;
 
+    background: #FFDC60;
+    border-radius: 100%;
+    width: 50px;
+    height: 50px;
+    display: flex
+;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+.audio-button svg{
+    width: 20px;
+    height: 20px;
+}
+
+
+.audio-button:hover {
+    transform: scale(1.1);
+    transition: ease-in-out .2s;
+}
 @media(max-width:767px){
     .kana-table-container .back-button{
         display: none;

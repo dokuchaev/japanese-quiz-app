@@ -18,17 +18,17 @@ const Sidebar = () => {
     {
       title: 'Числительные',
       items: [
-        { key: 'numbers', label: '三 Числительные' },
+        { key: 'numbers', label: '四 Числа' },
 
       ],
     },
     {
       title: 'Ввод',
       items: [
-        { key: 'hiraganaInput', label: 'ぬ Хирагана' },
-        { key: 'katakanaInput', label: 'ぬ Катакана' },
-        { key: 'dakutenInput', label: 'ぬ Дакутэн/Хандакутэн' },
-        { key: 'numbersInput', label: '四 Числительные' },
+        { key: 'hiraganaInput', label: 'あ Хирагана' },
+        { key: 'katakanaInput', label: 'シ Катакана' },
+        { key: 'dakutenInput', label: 'ガ Дакутэн/Хандакутэн' },
+        { key: 'numbersInput', label: '四 Числа' },
       ],
     },
   ];
