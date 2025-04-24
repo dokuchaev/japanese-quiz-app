@@ -6,6 +6,7 @@ import Home from './components/Home';
 import ThemeToggle from './components/ThemeToggle';
 import KanaTable from './components/KanaTable';
 import NumbersTable from "./components/NumbersTable";
+import ScrollToTop from "./components/ScrollToTop";
 
 
 import './App.css';
@@ -52,6 +53,8 @@ const App = () => {
             setSlideDirection('in');
         }, 300);
     };
+
+
 
     const isQuizPage = location.pathname.startsWith('/quiz/');
 
@@ -106,13 +109,14 @@ const App = () => {
                         </div>
                     ) : (
                         <>
-
+                            <ScrollToTop /> {/* 👈 вот эта строка */}
                             <Routes>
                                 <Route path="/" element={<Home />} />
                                 <Route path="/quiz/:quiz" element={<Quiz />} />
                                 <Route path="/quiz/:quiz/table" element={<KanaTable />} />
                                 <Route path="/quiz/numbers/table" element={<NumbersTable />} />
                             </Routes>
+
                         </>
                     )}
                 </div>

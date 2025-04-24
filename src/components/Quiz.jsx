@@ -328,7 +328,7 @@ const Quiz = () => {
               </div>
           ) : (
               <div className="button-wrapper button-wrapper-flex">
-                {quiz === 'hiragana' && (
+                {(quiz === 'hiragana' || quiz === "hiraganaInput") && (
                     <div>
                       <h3>Хотите повторить хирагану?</h3>
                       <button
@@ -341,7 +341,7 @@ const Quiz = () => {
                     </div>
                 )}
 
-                {quiz === 'katakana' && (
+                {(quiz === 'katakana' || quiz === "katakanaInput") && (
                     <div>
                       <h3>Хотите повторить катакану?</h3>
                       <button
@@ -353,7 +353,7 @@ const Quiz = () => {
                       </button>
                     </div>
                 )}
-                {quiz === 'dakuten' && (
+                {(quiz === 'dakuten' || quiz === "dakutenInput") && (
                     <div>
                       <h3>Хотите повторить дакутен/хандакутэн?</h3>
                       <button

@@ -26,5 +26,7 @@ export const numbersData = [
     { arabic: "70", kanji: "七十", reading: "ななじゅう (nanajuu)" },
     { arabic: "80", kanji: "八十", reading: "はちじゅう (hachijuu)" },
     { arabic: "90", kanji: "九十", reading: "きゅうじゅう (kyuujuu)" },
-    { arabic: "100", kanji: "百", reading: "ひゃく (hyaku)" }
+    { arabic: "100", kanji: "百", reading: "ひゃく (hyaku)" },
+    { arabic: "101", kanji: "百一", reading: "ひゃくいち (hyakuichi)" },
+    { arabic: "110", kanji: "百十", reading: "ひゃくじゅう (hyakujū)" }
 ];

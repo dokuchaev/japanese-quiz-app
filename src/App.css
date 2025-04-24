@@ -156,12 +156,16 @@ body {
     position: absolute;
     background-color: transparent;
     border: none;
-    padding: 10px;
+    padding: 7px 10px;
     font-size: 16px;
     margin-bottom: 10px;
     cursor: pointer;
     top: 10px;
     left: 10px;
+  }
+
+  [data-theme='dark'] .back-button{
+    color: #fff;
   }
 
 }
