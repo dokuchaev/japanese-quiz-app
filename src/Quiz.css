@@ -56,6 +56,7 @@
 
 /* Кнопка */
 .quiz-button {
+    min-width: 145px;
     padding: 12px 24px;
     font-size: 16px;
     border-radius: 12px;
@@ -273,7 +274,23 @@ display: flex;
     text-align: center;
 }
 
+.result-stat{
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
 
+.percentage-text{
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+@media(min-width: 2000px){
+    .quiz-container{
+        transform: scale(1.5);
+    }
+}
 @media(max-width: 787px){
     .quiz-container{
         grid-template-columns: 1fr;

@@ -39,6 +39,8 @@ const Quiz = () => {
   const [countdown, setCountdown] = useState(3);
   const [pendingStartParams, setPendingStartParams] = useState(null);
 
+
+
   const currentQuizState = quizStates[quiz] || {
     questions: [],
     currentQuestionIndex: 0,
@@ -395,6 +397,8 @@ const Quiz = () => {
   if (questions.length === 0) return <p>Загрузка вопросов...</p>;
 
   const currentQuestion = questions[currentQuestionIndex];
+  const totalAnswers = score.correct + score.incorrect;
+  const percentage = totalAnswers > 0 ? Math.round((score.correct / totalAnswers) * 100) : 0;
 
   return (
       <div style={{marginBottom: "20px"}}>
@@ -413,26 +417,35 @@ const Quiz = () => {
         </p>
 
         {showResults ? (
-            <div style={{textAlign: "center", marginTop: "40px" }}>
-              <h2>Результаты</h2>
-              <p>👍 Правильно: {score.correct}</p>
-              <p>👎 Неправильно: {score.incorrect}</p>
-              <p>⏱️ Время: {formatTime(timeElapsed)}</p>
+            <div style={{textAlign: "center", marginTop: "40px"}}>
+              <h2>Результаты:</h2>
+              <div className="percentage-text">
+                {percentage}% правильных ответов
+              </div>
+
+              <div className="result-stat">
+                <p>👍 Правильно: {score.correct}</p>
+                <p>👎 Неправильно: {score.incorrect}</p>
+                <p>⏱️ Время: {formatTime(timeElapsed)}</p>
+              </div>
+
 
               {incorrectAnswers.length > 0 && (
-                  <div style={{ marginTop: "30px", textAlign: "left", maxWidth: "600px", marginInline: "auto" }}>
+                  <div style={{marginTop: "20px", textAlign: "left", maxWidth: "600px", marginInline: "auto"}}>
                     <h3 className="mistakes-title">Ошибки:</h3>
                     <ul className="mistakes-list">
                       {incorrectAnswers.map((item, idx) => (
-                          <li key={idx} style={{ marginBottom: "10px" }}>
-                            <strong>{item.question}</strong>: ваш ответ – <span style={{ color: "red" }}>{item.yourAnswer}</span>, правильный – <span style={{ color: "green" }}>{item.correctAnswer}</span>
+                          <li key={idx} style={{marginBottom: "10px"}}>
+                            <strong>{item.question}</strong>: ваш ответ – <span
+                              style={{color: "red"}}>{item.yourAnswer}</span>, правильный – <span
+                              style={{color: "green"}}>{item.correctAnswer}</span>
                           </li>
                       ))}
                     </ul>
                   </div>
               )}
 
-              <div style={{ marginTop: "30px" }}>
+              <div style={{marginTop: "30px"}}>
                 <div className='title-reload'>Хотите попробовать снова?</div>
                 <div className="button-wrapper">
                   {(quiz === "numbers" || quiz === "numbersInput") ? (

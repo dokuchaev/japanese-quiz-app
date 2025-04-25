@@ -162,6 +162,7 @@ body {
     cursor: pointer;
     top: 10px;
     left: 10px;
+    color: #007aff;
   }
 
   [data-theme='dark'] .back-button{
