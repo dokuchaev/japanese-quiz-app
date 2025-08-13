@@ -1,0 +1,272 @@
+// Маппинг ресурсов для React Native
+// Этот файл содержит все необходимые require() для статических файлов
+
+export const hiraganaGifMap = {
+  'a': require('../../assets/strokes/hiragana/あ.gif'),
+  'i': require('../../assets/strokes/hiragana/い.gif'),
+  'u': require('../../assets/strokes/hiragana/う.gif'),
+  'e': require('../../assets/strokes/hiragana/え.gif'),
+  'o': require('../../assets/strokes/hiragana/お.gif'),
+  'ka': require('../../assets/strokes/hiragana/か.gif'),
+  'ki': require('../../assets/strokes/hiragana/き.gif'),
+  'ku': require('../../assets/strokes/hiragana/く.gif'),
+  'ke': require('../../assets/strokes/hiragana/け.gif'),
+  'ko': require('../../assets/strokes/hiragana/こ.gif'),
+  'sa': require('../../assets/strokes/hiragana/さ.gif'),
+  'shi': require('../../assets/strokes/hiragana/し.gif'),
+  'su': require('../../assets/strokes/hiragana/す.gif'),
+  'se': require('../../assets/strokes/hiragana/せ.gif'),
+  'so': require('../../assets/strokes/hiragana/そ.gif'),
+  'ta': require('../../assets/strokes/hiragana/た.gif'),
+  'chi': require('../../assets/strokes/hiragana/ち.gif'),
+  'tsu': require('../../assets/strokes/hiragana/つ.gif'),
+  'te': require('../../assets/strokes/hiragana/て.gif'),
+  'to': require('../../assets/strokes/hiragana/と.gif'),
+  'na': require('../../assets/strokes/hiragana/な.gif'),
+  'ni': require('../../assets/strokes/hiragana/に.gif'),
+  'nu': require('../../assets/strokes/hiragana/ぬ.gif'),
+  'ne': require('../../assets/strokes/hiragana/ね.gif'),
+  'no': require('../../assets/strokes/hiragana/の.gif'),
+  'ha': require('../../assets/strokes/hiragana/は.gif'),
+  'hi': require('../../assets/strokes/hiragana/ひ.gif'),
+  'fu': require('../../assets/strokes/hiragana/ふ.gif'),
+  'he': require('../../assets/strokes/hiragana/へ.gif'),
+  'ho': require('../../assets/strokes/hiragana/ほ.gif'),
+  'ma': require('../../assets/strokes/hiragana/ま.gif'),
+  'mi': require('../../assets/strokes/hiragana/み.gif'),
+  'mu': require('../../assets/strokes/hiragana/む.gif'),
+  'me': require('../../assets/strokes/hiragana/め.gif'),
+  'mo': require('../../assets/strokes/hiragana/も.gif'),
+  'ya': require('../../assets/strokes/hiragana/や.gif'),
+  'yu': require('../../assets/strokes/hiragana/ゆ.gif'),
+  'yo': require('../../assets/strokes/hiragana/よ.gif'),
+  'ra': require('../../assets/strokes/hiragana/ら.gif'),
+  'ri': require('../../assets/strokes/hiragana/り.gif'),
+  'ru': require('../../assets/strokes/hiragana/る.gif'),
+  're': require('../../assets/strokes/hiragana/れ.gif'),
+  'ro': require('../../assets/strokes/hiragana/ろ.gif'),
+  'wa': require('../../assets/strokes/hiragana/わ.gif'),
+  'wo': require('../../assets/strokes/hiragana/を.gif'),
+  'n': require('../../assets/strokes/hiragana/ん.gif'),
+};
+
+export const katakanaGifMap = {
+  'a': require('../../assets/strokes/katakana/ア.gif'),
+  'i': require('../../assets/strokes/katakana/イ.gif'),
+  'u': require('../../assets/strokes/katakana/ウ.gif'),
+  'e': require('../../assets/strokes/katakana/エ.gif'),
+  'o': require('../../assets/strokes/katakana/オ.gif'),
+  'ka': require('../../assets/strokes/katakana/カ.gif'),
+  'ki': require('../../assets/strokes/katakana/キ.gif'),
+  'ku': require('../../assets/strokes/katakana/ク.gif'),
+  'ke': require('../../assets/strokes/katakana/ケ.gif'),
+  'ko': require('../../assets/strokes/katakana/コ.gif'),
+  'sa': require('../../assets/strokes/katakana/サ.gif'),
+  'shi': require('../../assets/strokes/katakana/シ.gif'),
+  'su': require('../../assets/strokes/katakana/ス.gif'),
+  'se': require('../../assets/strokes/katakana/セ.gif'),
+  'so': require('../../assets/strokes/katakana/ソ.gif'),
+  'ta': require('../../assets/strokes/katakana/タ.gif'),
+  'chi': require('../../assets/strokes/katakana/チ.gif'),
+  'tsu': require('../../assets/strokes/katakana/ツ.gif'),
+  'te': require('../../assets/strokes/katakana/テ.gif'),
+  'to': require('../../assets/strokes/katakana/ト.gif'),
+  'na': require('../../assets/strokes/katakana/ナ.gif'),
+  'ni': require('../../assets/strokes/katakana/ニ.gif'),
+  'nu': require('../../assets/strokes/katakana/ヌ.gif'),
+  'ne': require('../../assets/strokes/katakana/ネ.gif'),
+  'no': require('../../assets/strokes/katakana/ノ.gif'),
+  'ha': require('../../assets/strokes/katakana/ハ.gif'),
+  'hi': require('../../assets/strokes/katakana/ヒ.gif'),
+  'fu': require('../../assets/strokes/katakana/フ.gif'),
+  'he': require('../../assets/strokes/katakana/ヘ.gif'),
+  'ho': require('../../assets/strokes/katakana/ホ.gif'),
+  'ma': require('../../assets/strokes/katakana/マ.gif'),
+  'mi': require('../../assets/strokes/katakana/ミ.gif'),
+  'mu': require('../../assets/strokes/katakana/ム.gif'),
+  'me': require('../../assets/strokes/katakana/メ.gif'),
+  'mo': require('../../assets/strokes/katakana/モ.gif'),
+  'ya': require('../../assets/strokes/katakana/ヤ.gif'),
+  'yu': require('../../assets/strokes/katakana/ユ.gif'),
+  'yo': require('../../assets/strokes/katakana/ヨ.gif'),
+  'ra': require('../../assets/strokes/katakana/ラ.gif'),
+  'ri': require('../../assets/strokes/katakana/リ.gif'),
+  'ru': require('../../assets/strokes/katakana/ル.gif'),
+  're': require('../../assets/strokes/katakana/レ.gif'),
+  'ro': require('../../assets/strokes/katakana/ロ.gif'),
+  'wa': require('../../assets/strokes/katakana/ワ.gif'),
+  'wo': require('../../assets/strokes/katakana/ヲ.gif'),
+  'n': require('../../assets/strokes/katakana/ン.gif'),
+};
+
+export const dakutenGifMap = {
+  // Убираем GIF для дакутэн - оставляем только звуки
+};
+
+export const hiraganaAudioMap = {
+  'a': require('../../assets/audio/hiragana/a.mp3'),
+  'i': require('../../assets/audio/hiragana/i.mp3'),
+  'u': require('../../assets/audio/hiragana/u.mp3'),
+  'e': require('../../assets/audio/hiragana/e.mp3'),
+  'o': require('../../assets/audio/hiragana/o.mp3'),
+  'ka': require('../../assets/audio/hiragana/ka.mp3'),
+  'ki': require('../../assets/audio/hiragana/ki.mp3'),
+  'ku': require('../../assets/audio/hiragana/ku.mp3'),
+  'ke': require('../../assets/audio/hiragana/ke.mp3'),
+  'ko': require('../../assets/audio/hiragana/ko.mp3'),
+  'sa': require('../../assets/audio/hiragana/sa.mp3'),
+  'shi': require('../../assets/audio/hiragana/shi.mp3'),
+  'su': require('../../assets/audio/hiragana/su.mp3'),
+  'se': require('../../assets/audio/hiragana/se.mp3'),
+  'so': require('../../assets/audio/hiragana/so.mp3'),
+  'ta': require('../../assets/audio/hiragana/ta.mp3'),
+  'chi': require('../../assets/audio/hiragana/chi.mp3'),
+  'tsu': require('../../assets/audio/hiragana/tsu.mp3'),
+  'te': require('../../assets/audio/hiragana/te.mp3'),
+  'to': require('../../assets/audio/hiragana/to.mp3'),
+  'na': require('../../assets/audio/hiragana/na.mp3'),
+  'ni': require('../../assets/audio/hiragana/ni.mp3'),
+  'nu': require('../../assets/audio/hiragana/nu.mp3'),
+  'ne': require('../../assets/audio/hiragana/ne.mp3'),
+  'no': require('../../assets/audio/hiragana/no.mp3'),
+  'ha': require('../../assets/audio/hiragana/ha.mp3'),
+  'hi': require('../../assets/audio/hiragana/hi.mp3'),
+  'fu': require('../../assets/audio/hiragana/fu.mp3'),
+  'he': require('../../assets/audio/hiragana/he.mp3'),
+  'ho': require('../../assets/audio/hiragana/ho.mp3'),
+  'ma': require('../../assets/audio/hiragana/ma.mp3'),
+  'mi': require('../../assets/audio/hiragana/mi.mp3'),
+  'mu': require('../../assets/audio/hiragana/mu.mp3'),
+  'me': require('../../assets/audio/hiragana/me.mp3'),
+  'mo': require('../../assets/audio/hiragana/mo.mp3'),
+  'ya': require('../../assets/audio/hiragana/ya.mp3'),
+  'yu': require('../../assets/audio/hiragana/yu.mp3'),
+  'yo': require('../../assets/audio/hiragana/yo.mp3'),
+  'ra': require('../../assets/audio/hiragana/ra.mp3'),
+  'ri': require('../../assets/audio/hiragana/ri.mp3'),
+  'ru': require('../../assets/audio/hiragana/ru.mp3'),
+  're': require('../../assets/audio/hiragana/re.mp3'),
+  'ro': require('../../assets/audio/hiragana/ro.mp3'),
+  'wa': require('../../assets/audio/hiragana/wa.mp3'),
+  'wo': require('../../assets/audio/hiragana/wo.mp3'),
+  'n': require('../../assets/audio/hiragana/n.mp3'),
+};
+
+export const katakanaAudioMap = {
+  'a': require('../../assets/audio/hiragana/a.mp3'),
+  'i': require('../../assets/audio/hiragana/i.mp3'),
+  'u': require('../../assets/audio/hiragana/u.mp3'),
+  'e': require('../../assets/audio/hiragana/e.mp3'),
+  'o': require('../../assets/audio/hiragana/o.mp3'),
+  'ka': require('../../assets/audio/hiragana/ka.mp3'),
+  'ki': require('../../assets/audio/hiragana/ki.mp3'),
+  'ku': require('../../assets/audio/hiragana/ku.mp3'),
+  'ke': require('../../assets/audio/hiragana/ke.mp3'),
+  'ko': require('../../assets/audio/hiragana/ko.mp3'),
+  'sa': require('../../assets/audio/hiragana/sa.mp3'),
+  'shi': require('../../assets/audio/hiragana/shi.mp3'),
+  'su': require('../../assets/audio/hiragana/su.mp3'),
+  'se': require('../../assets/audio/hiragana/se.mp3'),
+  'so': require('../../assets/audio/hiragana/so.mp3'),
+  'ta': require('../../assets/audio/hiragana/ta.mp3'),
+  'chi': require('../../assets/audio/hiragana/chi.mp3'),
+  'tsu': require('../../assets/audio/hiragana/tsu.mp3'),
+  'te': require('../../assets/audio/hiragana/te.mp3'),
+  'to': require('../../assets/audio/hiragana/to.mp3'),
+  'na': require('../../assets/audio/hiragana/na.mp3'),
+  'ni': require('../../assets/audio/hiragana/ni.mp3'),
+  'nu': require('../../assets/audio/hiragana/nu.mp3'),
+  'ne': require('../../assets/audio/hiragana/ne.mp3'),
+  'no': require('../../assets/audio/hiragana/no.mp3'),
+  'ha': require('../../assets/audio/hiragana/ha.mp3'),
+  'hi': require('../../assets/audio/hiragana/hi.mp3'),
+  'fu': require('../../assets/audio/hiragana/fu.mp3'),
+  'he': require('../../assets/audio/hiragana/he.mp3'),
+  'ho': require('../../assets/audio/hiragana/ho.mp3'),
+  'ma': require('../../assets/audio/hiragana/ma.mp3'),
+  'mi': require('../../assets/audio/hiragana/mi.mp3'),
+  'mu': require('../../assets/audio/hiragana/mu.mp3'),
+  'me': require('../../assets/audio/hiragana/me.mp3'),
+  'mo': require('../../assets/audio/hiragana/mo.mp3'),
+  'ya': require('../../assets/audio/hiragana/ya.mp3'),
+  'yu': require('../../assets/audio/hiragana/yu.mp3'),
+  'yo': require('../../assets/audio/hiragana/yo.mp3'),
+  'ra': require('../../assets/audio/hiragana/ra.mp3'),
+  'ri': require('../../assets/audio/hiragana/ri.mp3'),
+  'ru': require('../../assets/audio/hiragana/ru.mp3'),
+  're': require('../../assets/audio/hiragana/re.mp3'),
+  'ro': require('../../assets/audio/hiragana/ro.mp3'),
+  'wa': require('../../assets/audio/hiragana/wa.mp3'),
+  'wo': require('../../assets/audio/hiragana/wo.mp3'),
+  'n': require('../../assets/audio/hiragana/n.mp3'),
+};
+
+export const dakutenAudioMap = {
+  'ga': require('../../assets/audio/dakuten/ga.mp3'),
+  'gi': require('../../assets/audio/dakuten/gi.mp3'),
+  'gu': require('../../assets/audio/dakuten/gu.mp3'),
+  'ge': require('../../assets/audio/dakuten/ge.mp3'),
+  'go': require('../../assets/audio/dakuten/go.mp3'),
+  'za': require('../../assets/audio/dakuten/za.mp3'),
+  'ji': require('../../assets/audio/dakuten/ji.mp3'),
+  'zu': require('../../assets/audio/dakuten/zu.mp3'),
+  'ze': require('../../assets/audio/dakuten/ze.mp3'),
+  'zo': require('../../assets/audio/dakuten/zo.mp3'),
+  'da': require('../../assets/audio/dakuten/da.mp3'),
+  'ji': require('../../assets/audio/dakuten/ji.mp3'),
+  'zu': require('../../assets/audio/dakuten/zu.mp3'),
+  'de': require('../../assets/audio/dakuten/de.mp3'),
+  'do': require('../../assets/audio/dakuten/do.mp3'),
+  'ba': require('../../assets/audio/dakuten/ba.mp3'),
+  'bi': require('../../assets/audio/dakuten/bi.mp3'),
+  'bu': require('../../assets/audio/dakuten/bu.mp3'),
+  'be': require('../../assets/audio/dakuten/be.mp3'),
+  'bo': require('../../assets/audio/dakuten/bo.mp3'),
+  'pa': require('../../assets/audio/dakuten/pa.mp3'),
+  'pi': require('../../assets/audio/dakuten/pi.mp3'),
+  'pu': require('../../assets/audio/dakuten/pu.mp3'),
+  'pe': require('../../assets/audio/dakuten/pe.mp3'),
+  'po': require('../../assets/audio/dakuten/po.mp3'),
+};
+
+export const numbersAudioMap = {
+  '1': require('../../assets/audio/numbers/1.mp3'),
+  '2': require('../../assets/audio/numbers/2.mp3'),
+  '3': require('../../assets/audio/numbers/3.mp3'),
+  '4': require('../../assets/audio/numbers/4.mp3'),
+  '5': require('../../assets/audio/numbers/5.mp3'),
+  '6': require('../../assets/audio/numbers/6.mp3'),
+  '7': require('../../assets/audio/numbers/7.mp3'),
+  '8': require('../../assets/audio/numbers/8.mp3'),
+  '9': require('../../assets/audio/numbers/9.mp3'),
+  '10': require('../../assets/audio/numbers/10.mp3'),
+};
+
+// Функции для получения ресурсов
+export const getHiraganaGif = (romaji) => {
+  return hiraganaGifMap[romaji] || null;
+};
+
+export const getKatakanaGif = (romaji) => {
+  return katakanaGifMap[romaji] || null;
+};
+
+export const getDakutenGif = (romaji) => {
+  return dakutenGifMap[romaji] || null;
+};
+
+export const getHiraganaAudio = (romaji) => {
+  return hiraganaAudioMap[romaji] || null;
+};
+
+export const getKatakanaAudio = (romaji) => {
+  return katakanaAudioMap[romaji] || null;
+};
+
+export const getDakutenAudio = (romaji) => {
+  return dakutenAudioMap[romaji] || null;
+};
+
+export const getNumbersAudio = (number) => {
+  return numbersAudioMap[number] || null;
+};
