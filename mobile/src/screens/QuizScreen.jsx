@@ -36,6 +36,8 @@ export default function QuizScreen({ route, navigation }) {
   const { quiz } = route.params ?? { quiz: 'hiragana' };
   const { theme } = useTheme();
   const [speedMode, setSpeedMode] = useState(false);
+  const [randomMode, setRandomMode] = useState(true); // 15 случайных символов
+  const [allSymbolsMode, setAllSymbolsMode] = useState(false); // все символы
   const [state, setState] = useState({
     questions: [],
     currentQuestionIndex: 0,
@@ -86,6 +88,59 @@ export default function QuizScreen({ route, navigation }) {
       started: true,
       showEmotionAnimation: false,
     });
+  };
+
+  // Функции для обработки переключателей режимов тестирования
+  const handleRandomMode = (value) => {
+    if (value) {
+      setRandomMode(true);
+      setAllSymbolsMode(false);
+    } else {
+      // Нельзя выключить, если другой тоже выключен
+      if (!allSymbolsMode) {
+        return; // Игнорируем попытку выключить
+      }
+      setRandomMode(false);
+    }
+  };
+
+  const handleAllSymbolsMode = (value) => {
+    if (value) {
+      setAllSymbolsMode(true);
+      setRandomMode(false);
+    } else {
+      // Нельзя выключить, если другой тоже выключен
+      if (!randomMode) {
+        return; // Игнорируем попытку выключить
+      }
+      setAllSymbolsMode(false);
+    }
+  };
+
+  // Функция запуска теста с выбранными опциями
+  const startTestWithOptions = () => {
+    // Убеждаемся, что хотя бы один режим выбран
+    if (!randomMode && !allSymbolsMode) {
+      // Если оба выключены, включаем случайный режим по умолчанию
+      setRandomMode(true);
+      return;
+    }
+
+    if (isNumbersQuiz) {
+      // Для числительных используем старую логику с диапазонами
+      if (randomMode) {
+        startQuiz(20, (q) => +q.correctAnswer <= 10);
+      } else if (allSymbolsMode) {
+        startQuiz(20, (q) => +q.correctAnswer > 10);
+      }
+    } else {
+      // Для каны используем новую логику
+      if (randomMode) {
+        startQuiz(quiz === 'allkana' ? 30 : 15);
+      } else if (allSymbolsMode) {
+        startQuiz(null);
+      }
+    }
   };
 
   const showEmotionAnimation = () => {
@@ -180,6 +235,13 @@ export default function QuizScreen({ route, navigation }) {
       if (questionTimerRef.current) clearInterval(questionTimerRef.current);
     };
   }, []);
+
+  // Гарантируем, что всегда выбран хотя бы один режим тестирования
+  useEffect(() => {
+    if (!randomMode && !allSymbolsMode) {
+      setRandomMode(true);
+    }
+  }, [randomMode, allSymbolsMode]);
 
   const isInputQuiz = quiz.includes('Input');
   const isNumbersQuiz = quiz === 'numbers' || quiz === 'numbersInput';
@@ -332,17 +394,72 @@ export default function QuizScreen({ route, navigation }) {
         {!state.started ? (
           <AnimatedView animationType="fadeIn" duration={500}>
             <View style={{ alignItems: 'center', marginTop: 20 }}>
+              {/* Заголовок по центру */}
               <Text style={[styles.title, theme === 'dark' && styles.titleDark]}>
                 Тест по {isInputQuiz ? getInputQuizTitle() : getQuizTitle()}
               </Text>
               
-              {/* Переключатель режима скорости */}
-              <View style={[styles.speedModeContainer, theme === 'dark' && styles.speedModeContainerDark]}>
-                <View style={styles.speedModeContent}>
-                  <View style={styles.speedModeTextContainer}>
-                    <Text style={[styles.speedModeTitle, theme === 'dark' && styles.speedModeTitleDark]}>
-                      Режим скорости ({isInputQuiz ? '5с' : '3с'})
+              <View style={{ width: '100%', marginTop: 20 }}>
+                {/* Переключатель режима случайных символов */}
+                <View style={[styles.testModeToggle, theme === 'dark' && styles.testModeToggleDark]}>
+                  <View style={styles.testModeInfo}>
+                    <Text style={[styles.testModeIcon, theme === 'dark' && styles.testModeIconDark]}>
+                      🎲
                     </Text>
+                    <View style={styles.testModeTextContainer}>
+                      <Text style={[styles.testModeLabel, theme === 'dark' && styles.testModeLabelDark]}>
+                        {isNumbersQuiz ? 'От 1 до 10' : (quiz === 'allkana' ? '30 случайных символов' : '15 случайных символов')}
+                      </Text>
+                      <Text style={[styles.testModeDescription, theme === 'dark' && styles.testModeDescriptionDark]}>
+                        {isNumbersQuiz ? 'Простые числа' : 'Быстрый тест'}
+                      </Text>
+                    </View>
+                  </View>
+                  <Switch
+                    value={randomMode}
+                    onValueChange={handleRandomMode}
+                    trackColor={{ false: '#e5e7eb', true: '#10b981' }}
+                    thumbColor={randomMode ? '#ffffff' : '#ffffff'}
+                  />
+                </View>
+
+                {/* Переключатель режима всех символов */}
+                <View style={[styles.testModeToggle, theme === 'dark' && styles.testModeToggleDark]}>
+                  <View style={styles.testModeInfo}>
+                    <Text style={[styles.testModeIcon, theme === 'dark' && styles.testModeIconDark]}>
+                      📚
+                    </Text>
+                    <View style={styles.testModeTextContainer}>
+                      <Text style={[styles.testModeLabel, theme === 'dark' && styles.testModeLabelDark]}>
+                        {isNumbersQuiz ? 'От 10 до 100' : 'Все символы'}
+                      </Text>
+                      <Text style={[styles.testModeDescription, theme === 'dark' && styles.testModeDescriptionDark]}>
+                        {isNumbersQuiz ? 'Сложные числа' : 'Полный тест'}
+                      </Text>
+                    </View>
+                  </View>
+                  <Switch
+                    value={allSymbolsMode}
+                    onValueChange={handleAllSymbolsMode}
+                    trackColor={{ false: '#e5e7eb', true: '#10b981' }}
+                    thumbColor={allSymbolsMode ? '#ffffff' : '#ffffff'}
+                  />
+                </View>
+
+                {/* Переключатель режима скорости */}
+                <View style={[styles.testModeToggle, theme === 'dark' && styles.testModeToggleDark]}>
+                  <View style={styles.testModeInfo}>
+                    <Text style={[styles.testModeIcon, theme === 'dark' && styles.testModeIconDark]}>
+                      ⚡
+                    </Text>
+                    <View style={styles.testModeTextContainer}>
+                      <Text style={[styles.testModeLabel, theme === 'dark' && styles.testModeLabelDark]}>
+                        Режим скорости
+                      </Text>
+                      <Text style={[styles.testModeDescription, theme === 'dark' && styles.testModeDescriptionDark]}>
+                        {isInputQuiz ? '5 секунд на ответ' : '3 секунды на ответ'}
+                      </Text>
+                    </View>
                   </View>
                   <Switch
                     value={speedMode}
@@ -351,34 +468,17 @@ export default function QuizScreen({ route, navigation }) {
                     thumbColor={speedMode ? '#ffffff' : '#ffffff'}
                   />
                 </View>
-              </View>
 
-              <View style={{ gap: 10, marginTop: 20, width: '100%' }}>
-                {/* Кнопки для тестирования */}
-                <Text style={[styles.sectionTitle, theme === 'dark' && styles.sectionTitleDark]}>
-                  Тестирование
-                </Text>
+                {/* Кнопка "Начать тест" */}
+                <Pressable 
+                  style={[styles.startTestButton, theme === 'dark' && styles.startTestButtonDark]} 
+                  onPress={startTestWithOptions}
+                >
+                  <Text style={styles.startTestButtonText}>
+                    🚀 Начать тест
+                  </Text>
+                </Pressable>
                 
-                {isNumbersQuiz ? (
-                  <>
-                    <Pressable style={styles.button} onPress={() => startQuiz(20, (q) => +q.correctAnswer <= 10)}>
-                      <Text style={styles.buttonText}>От 1 до 10</Text>
-                    </Pressable>
-                    <Pressable style={styles.button} onPress={() => startQuiz(20, (q) => +q.correctAnswer > 10)}>
-                      <Text style={styles.buttonText}>От 10 до 100</Text>
-                    </Pressable>
-                  </>
-                ) : (
-                  <>
-                    <Pressable style={styles.button} onPress={() => startQuiz(quiz === 'allkana' ? 30 : 15)}>
-                      <Text style={styles.buttonText}>{quiz === 'allkana' ? '30 случайных вопросов' : '15 случайных вопросов'}</Text>
-                    </Pressable>
-                    <Pressable style={styles.button} onPress={() => startQuiz(null)}>
-                      <Text style={styles.buttonText}>Все вопросы</Text>
-                    </Pressable>
-                  </>
-                )}
-
                 {/* Кнопки для просмотра таблиц */}
                 <Text style={[styles.sectionTitle, theme === 'dark' && styles.sectionTitleDark]}>
                   Изучение
@@ -596,7 +696,7 @@ const styles = StyleSheet.create({
     fontSize: 20, 
     fontWeight: '700', 
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 0,
     color: '#1f2937',
   },
   titleDark: {
@@ -940,6 +1040,46 @@ const styles = StyleSheet.create({
   settingsTextDark: {
     color: '#f9fafb',
   },
+  headerWithSpeedToggle: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginBottom: 16,
+    gap: 12,
+  },
+  compactSpeedToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.06)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+    minWidth: 140,
+  },
+  compactSpeedToggleDark: {
+    backgroundColor: 'rgba(31, 41, 55, 0.85)',
+    borderColor: 'rgba(255, 255, 255, 0.06)',
+  },
+  speedLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1f2937',
+    marginRight: 8,
+  },
+  speedLabelDark: {
+    color: '#f9fafb',
+  },
+  smallSwitch: {
+    transform: [{ scale: 0.8 }],
+  },
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -988,6 +1128,247 @@ const styles = StyleSheet.create({
   },
   dropdownTextDark: {
     color: '#f9fafb',
+  },
+  speedIconContainer: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: 12,
+    padding: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.06)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  speedIconButton: {
+    padding: 4,
+  },
+  speedIconButtonActive: {
+    backgroundColor: '#10b981',
+  },
+  speedIconButtonDark: {
+    backgroundColor: 'rgba(31, 41, 55, 0.85)',
+    borderColor: 'rgba(255, 255, 255, 0.06)',
+  },
+  speedIcon: {
+    fontSize: 20,
+    color: '#1f2937',
+  },
+  speedIconActive: {
+    color: '#fff',
+  },
+  speedIconDark: {
+    color: '#f9fafb',
+  },
+  speedButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: 12,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.06)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+    marginBottom: 8,
+  },
+  speedButtonActive: {
+    backgroundColor: '#10b981',
+    borderColor: '#10b981',
+  },
+  speedButtonDark: {
+    backgroundColor: 'rgba(31, 41, 55, 0.85)',
+    borderColor: 'rgba(255, 255, 255, 0.06)',
+  },
+  speedButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1f2937',
+    textAlign: 'center',
+  },
+  speedButtonTextActive: {
+    color: '#ffffff',
+  },
+  speedButtonTextDark: {
+    color: '#f9fafb',
+  },
+  speedInfo: {
+    flex: 1,
+    marginRight: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  speedIcon: {
+    fontSize: 18,
+    marginRight: 12,
+    color: '#1f2937',
+  },
+  speedIconDark: {
+    color: '#f9fafb',
+  },
+  speedLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1f2937',
+    marginBottom: 2,
+  },
+  speedLabelDark: {
+    color: '#f9fafb',
+  },
+  speedDescription: {
+    fontSize: 12,
+    color: '#6b7280',
+  },
+  speedDescriptionDark: {
+    color: '#9ca3af',
+  },
+  detailedSpeedToggle: {
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.06)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+    marginBottom: 16,
+    width: '100%',
+  },
+  detailedSpeedToggleDark: {
+    backgroundColor: 'rgba(31, 41, 55, 0.85)',
+    borderColor: 'rgba(255, 255, 255, 0.06)',
+  },
+  speedHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  speedTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1f2937',
+  },
+  speedTitleDark: {
+    color: '#f9fafb',
+  },
+  speedExplanation: {
+    fontSize: 14,
+    color: '#374151',
+    textAlign: 'center',
+  },
+  speedExplanationDark: {
+    color: '#d1d5db',
+  },
+  fullWidthSpeedToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 16,
+    marginBottom: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.06)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  fullWidthSpeedToggleDark: {
+    backgroundColor: 'rgba(31, 41, 55, 0.85)',
+    borderColor: 'rgba(255, 255, 255, 0.06)',
+  },
+  speedTextContainer: {
+    flex: 1,
+  },
+  testModeToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginBottom: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.06)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  testModeToggleDark: {
+    backgroundColor: 'rgba(31, 41, 55, 0.85)',
+    borderColor: 'rgba(255, 255, 255, 0.06)',
+  },
+  testModeInfo: {
+    flex: 1,
+    marginRight: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  testModeIcon: {
+    fontSize: 20,
+    marginRight: 12,
+    color: '#1f2937',
+  },
+  testModeIconDark: {
+    color: '#f9fafb',
+  },
+  testModeTextContainer: {
+    flex: 1,
+  },
+  testModeLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1f2937',
+  },
+  testModeLabelDark: {
+    color: '#f9fafb',
+  },
+  testModeDescription: {
+    fontSize: 12,
+    color: '#6b7280',
+  },
+  testModeDescriptionDark: {
+    color: '#9ca3af',
+  },
+  startTestButton: {
+    backgroundColor: '#10b981',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 10,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  startTestButtonDark: {
+    backgroundColor: '#059669',
+  },
+  startTestButtonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 16,
   },
 });
 
