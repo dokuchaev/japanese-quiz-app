@@ -11,7 +11,7 @@ export default function Home() {
         styles.title,
         theme === 'dark' && styles.titleDark
       ]}>
-        Добро пожаловать в японский квиз!
+        Выберите тест для тренировки
       </Text>
       <Text style={[
         styles.subtitle,

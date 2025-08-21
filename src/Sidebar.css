@@ -3,6 +3,7 @@
 .navbar{
     display: flex;
     flex-direction: column;
+    height: 100%;
 }
 
 /* Пункт меню */
@@ -165,4 +166,6 @@
 
 
 }
+
+
 

@@ -7,6 +7,7 @@ import ThemeToggle from './components/ThemeToggle';
 import KanaTable from './components/KanaTable';
 import NumbersTable from "./components/NumbersTable";
 import ScrollToTop from "./components/ScrollToTop";
+import FloatingContactButton from './components/FloatingContactButton';
 
 
 import './App.css';
@@ -121,6 +122,9 @@ const App = () => {
                     )}
                 </div>
             </div>
+            
+            {/* Floating contact button */}
+            <FloatingContactButton />
         </div>
     );
 };

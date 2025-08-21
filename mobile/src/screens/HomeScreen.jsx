@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { useTheme } from '../components/ThemeContext';
+import { useLanguage } from '../components/LanguageContext';
+import { createTranslate } from '../components/i18n';
 import ThemeToggle from '../components/ThemeToggle';
 import AnimatedView from '../components/AnimatedView';
 
@@ -19,19 +21,24 @@ const Tile = ({ title, subtitle, icon, onPress, theme, bgColor }) => (
 
 export default function HomeScreen({ navigation }) {
   const { theme } = useTheme();
+  const { language } = useLanguage();
+  const t = createTranslate(language);
   
   return (
     <ScrollView 
-      style={[styles.container, theme === 'dark' && styles.containerDark]}
+      style={[
+        styles.container, 
+        theme === 'dark' && styles.containerDark,
+        { backgroundColor: theme === 'dark' ? '#111827' : '#f8fafc' }
+      ]}
       contentContainerStyle={[styles.contentContainer, theme === 'dark' && styles.contentContainerDark]}
       showsVerticalScrollIndicator={false}
     >
       {/* Hero card */}
       <AnimatedView animationType="fadeIn" duration={500}>
         <View style={[styles.heroCard, theme === 'dark' && styles.heroCardDark]}>
-          <Text style={[styles.heroTitle, theme === 'dark' && styles.heroTitleDark]}>こんにちは!</Text>
-          <Text style={[styles.heroSubtitle, theme === 'dark' && styles.heroSubtitleDark]}>Добро пожаловать в японский квиз</Text>
-          <Text style={[styles.heroDescription, theme === 'dark' && styles.heroDescriptionDark]}>Выберите режим, чтобы начать изучение каны и числительных.</Text>
+          <Text style={[styles.heroTitle, theme === 'dark' && styles.heroTitleDark]}>{t('hello')}</Text>
+          <Text style={[styles.heroSubtitle, theme === 'dark' && styles.heroSubtitleDark]}>{t('welcome')}</Text>
         </View>
       </AnimatedView>
 
@@ -39,32 +46,32 @@ export default function HomeScreen({ navigation }) {
       <AnimatedView animationType="scaleIn" duration={700} delay={150}>
         <View style={styles.grid}>
           <Tile
-            title="Хирагана"
-            subtitle="Таблица и тренажёр"
+            title={t('hiragana')}
+            subtitle={t('practice')}
             icon="あ"
             theme={theme}
             bgColor={theme === 'dark' ? '#1f2937' : '#2563eb'}
             onPress={() => navigation.navigate('Quiz', { quiz: 'hiragana' })}
           />
           <Tile
-            title="Катакана"
-            subtitle="Таблица и тренажёр"
+            title={t('katakana')}
+            subtitle={t('practice')}
             icon="シ"
             theme={theme}
             bgColor={theme === 'dark' ? '#1f2937' : '#f59e0b'}
             onPress={() => navigation.navigate('Quiz', { quiz: 'katakana' })}
           />
           <Tile
-            title="Дакутэн"
-            subtitle="Диакритика"
+            title={t('dakuten')}
+            subtitle={t('practice')}
             icon="ガ"
             theme={theme}
             bgColor={theme === 'dark' ? '#1f2937' : '#10b981'}
             onPress={() => navigation.navigate('Quiz', { quiz: 'dakuten' })}
           />
           <Tile
-            title="Числительные"
-            subtitle="От 1 до 10 и далее"
+            title={t('numbersShort')}
+            subtitle={t('numbersFrom1To10')}
             icon="三"
             theme={theme}
             bgColor={theme === 'dark' ? '#1f2937' : '#ec4899'}
@@ -74,35 +81,32 @@ export default function HomeScreen({ navigation }) {
       </AnimatedView>
 
       {/* Input grid */}
-      <AnimatedView animationType="fadeIn" duration={700} delay={250}>
-        <Text style={[styles.sectionTitle, theme === 'dark' && styles.sectionTitleDark]}>Практика ввода</Text>
-      </AnimatedView>
 
       <AnimatedView animationType="scaleIn" duration={700} delay={350}>
         <View style={styles.grid}>
           <Tile
-            title="Хирагана ввод"
+            title={`${t('hiragana')} ${t('input')}`}
             icon="ぬ"
             theme={theme}
             bgColor={theme === 'dark' ? '#1f2937' : '#8b5cf6'}
             onPress={() => navigation.navigate('Quiz', { quiz: 'hiraganaInput' })}
           />
           <Tile
-            title="Катакана ввод"
+            title={`${t('katakana')} ${t('input')}`}
             icon="ヌ"
             theme={theme}
             bgColor={theme === 'dark' ? '#1f2937' : '#f87171'}
             onPress={() => navigation.navigate('Quiz', { quiz: 'katakanaInput' })}
           />
           <Tile
-            title="Дакутэн ввод"
+            title={`${t('dakuten')} ${t('input')}`}
             icon="ゔ"
             theme={theme}
             bgColor={theme === 'dark' ? '#1f2937' : '#60a5fa'}
             onPress={() => navigation.navigate('Quiz', { quiz: 'dakutenInput' })}
           />
           <Tile
-            title="Числа ввод"
+            title={`${t('numbersShort')} ${t('input')}`}
             icon="四"
             theme={theme}
             bgColor={theme === 'dark' ? '#1f2937' : '#fbbf24'}
@@ -110,6 +114,8 @@ export default function HomeScreen({ navigation }) {
           />
         </View>
       </AnimatedView>
+
+
 
       <AnimatedView animationType="fadeIn" duration={800} delay={500}>
         <Text style={[styles.footer, theme === 'dark' && styles.footerDark]}>がんばって！</Text>
@@ -119,20 +125,20 @@ export default function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { 
+    container: {
     flex: 1,
     backgroundColor: '#f8fafc',
   },
   containerDark: {
     backgroundColor: '#111827',
+    flex: 1,
   },
   contentContainer: {
     padding: 16,
     paddingBottom: 32,
-    backgroundColor: 'transparent',
   },
   contentContainerDark: { 
-    backgroundColor: 'transparent',
+    backgroundColor: '#111827',
   },
   heroCard: {
     backgroundColor: 'rgba(255,255,255,0.9)',
@@ -145,7 +151,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 12,
     elevation: 5,
-    marginBottom: 14,
+    marginBottom: 8,
   },
   heroCardDark: {
     backgroundColor: 'rgba(17,24,39,0.85)',
@@ -189,7 +195,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 12,
-    justifyContent: 'space-between',
+    marginTop: 8,
   },
   tile: {
     position: 'relative',
@@ -220,8 +226,18 @@ const styles = StyleSheet.create({
   tileTitleDark: { color: '#fff' },
   tileSubtitle: { fontSize: 12, color: 'rgba(255,255,255,0.9)' },
   tileSubtitleDark: { color: 'rgba(255,255,255,0.75)' },
-  footer: { textAlign: 'center', marginTop: 16, fontSize: 16, color: '#6b7280' },
-  footerDark: { color: '#9ca3af' },
+  footer: { 
+    textAlign: 'center', 
+    marginTop: 24, 
+    fontSize: 24, 
+    fontWeight: '700',
+    color: '#374151',
+    letterSpacing: 1,
+  },
+  footerDark: { 
+    color: '#f3f4f6',
+    fontWeight: '700',
+  },
 });
 
 

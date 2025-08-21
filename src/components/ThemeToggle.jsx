@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import '../ThemeToggle.css';
+
 const ThemeToggle = () => {
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem('theme') || 'light';
@@ -17,22 +18,29 @@ const ThemeToggle = () => {
   };
 
   return (
-    <div
+    <button
       onClick={toggleTheme}
-     className="theme-toggle"
-      style={{backgroundColor: theme === 'light' ? '#ddd' : '#333',}}
+      className="theme-toggle"
+      aria-label={`Переключить на ${theme === 'light' ? 'темную' : 'светлую'} тему`}
     >
-      <div
-          className="theme-toggle-btn"
-        style={{
-            transform: theme === 'light' ? 'translateX(0)': 'translateX(36px)',
-          backgroundColor: theme === 'light' ? '#fff' : '#000',
-            color: theme === 'light' ? '#000' : '#fff',
-        }}
-      >
-        {theme === 'light' ? '☀️' : '🌙'}
-      </div>
-    </div>
+      {theme === 'light' ? (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+      ) : (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      )}
+    </button>
   );
 };
 

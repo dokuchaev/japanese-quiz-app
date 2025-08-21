@@ -57,12 +57,18 @@ const NumbersTableScreen = ({ route, navigation }) => {
       styles.card,
       theme === 'dark' && styles.cardDark
     ]}>
+      {/* Фоновое число с адаптивным размером */}
       <Text style={[
-        styles.arabicNumber,
-        theme === 'dark' && styles.arabicNumberDark
+        styles.backgroundNumber,
+        item.correctAnswer <= 9 && styles.backgroundNumberLarge,
+        item.correctAnswer >= 10 && item.correctAnswer <= 99 && styles.backgroundNumberMedium,
+        item.correctAnswer >= 100 && styles.backgroundNumberSmall,
+        theme === 'dark' && styles.backgroundNumberDark
       ]}>
         {item.correctAnswer}
       </Text>
+      
+
       <Text style={[
         styles.kanji,
         theme === 'dark' && styles.kanjiDark
@@ -134,14 +140,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    gap: 15,
+    gap: 8,
   },
   card: {
-    width: (screenWidth - 70) / 3,
+    width: (screenWidth - 56) / 3,
     height: 120,
     backgroundColor: '#ffffff',
     borderRadius: 16,
-    padding: 15,
+    padding: 12,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -151,43 +157,52 @@ const styles = StyleSheet.create({
     elevation: 5,
     borderWidth: 1,
     borderColor: '#e5e7eb',
+    position: 'relative',
+    overflow: 'hidden',
   },
   cardDark: {
     backgroundColor: '#374151',
     borderColor: '#4b5563',
   },
   arabicNumber: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#1f2937',
-    marginBottom: 8,
+    marginBottom: 6,
+    zIndex: 1,
   },
   arabicNumberDark: {
     color: '#f9fafb',
   },
   kanji: {
-    fontSize: 28,
+    fontSize: 22,
     fontWeight: 'bold',
     color: '#1f2937',
     marginBottom: 6,
+    textAlign: 'center',
+    lineHeight: 26,
+    zIndex: 1,
   },
   kanjiDark: {
     color: '#f9fafb',
   },
   reading: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#6b7280',
     fontStyle: 'italic',
     marginBottom: 10,
+    textAlign: 'center',
+    lineHeight: 15,
+    zIndex: 1,
   },
   readingDark: {
     color: '#9ca3af',
   },
   audioButton: {
     backgroundColor: '#FFDC60',
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -195,9 +210,42 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 3,
+    zIndex: 1,
   },
   audioButtonText: {
-    fontSize: 16,
+    fontSize: 14,
+  },
+  backgroundNumber: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    fontSize: 50,
+    fontWeight: '900',
+    color: 'rgba(0, 0, 0, 0.08)',
+    zIndex: 0,
+    userSelect: 'none',
+    textAlign: 'center',
+    textAlignVertical: 'center',
+  },
+  backgroundNumberLarge: {
+    fontSize: 90,
+    fontWeight: '900',
+  },
+  backgroundNumberMedium: {
+    fontSize: 80,
+    fontWeight: '900',
+    textAlign: 'right',
+    textAlignVertical: 'center',
+    right: 10,
+  },
+  backgroundNumberSmall: {
+    fontSize: 50,
+    fontWeight: '900',
+  },
+  backgroundNumberDark: {
+    color: 'rgba(255, 255, 255, 0.08)',
   },
 });
 

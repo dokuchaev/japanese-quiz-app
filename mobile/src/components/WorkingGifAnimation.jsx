@@ -65,17 +65,8 @@ export default function WorkingGifAnimation({ result, onAnimationComplete }) {
     : require('../../assets/sad.gif');
   const message = shouldShowConfetti
     ? 'Отлично! 🎉'
-    : 'Не сдавайся! Всё обязательно получится 💪';
+    : 'がんばって! Всё обязательно получится 💪';
   const accentColor = shouldShowConfetti ? '#10b981' : '#f43f5e';
-  const softBgColor = shouldShowConfetti
-    ? 'rgba(16, 185, 129, 0.14)'
-    : 'rgba(244, 63, 94, 0.14)';
-  const softBorderColor = shouldShowConfetti
-    ? 'rgba(16, 185, 129, 0.45)'
-    : 'rgba(244, 63, 94, 0.45)';
-  const softShadowColor = shouldShowConfetti
-    ? 'rgba(16, 185, 129, 0.45)'
-    : 'rgba(244, 63, 94, 0.45)';
 
   return (
     <View style={styles.container}>
@@ -83,9 +74,6 @@ export default function WorkingGifAnimation({ result, onAnimationComplete }) {
         style={[
           styles.card,
           {
-            backgroundColor: softBgColor,
-            borderColor: softBorderColor,
-            shadowColor: softShadowColor,
             transform: [
               { scale: scaleAnim },
               {
@@ -115,36 +103,40 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 1000,
   },
-  // Квадратная карточка с тенью
+  // Карточка с белым фоном, размером под содержимое
   card: {
-    width: 280,
-    height: 280,
-    padding: 18,
-    borderRadius: 24,
+    backgroundColor: '#ffffff',
+    padding: 24,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 2,
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.25,
-    shadowRadius: 28,
-    elevation: 10,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 8,
+    minWidth: 200,
+    minHeight: 200,
   },
   gifImage: {
-    width: 180,
-    height: 180,
-    marginBottom: 12,
+    width: 120,
+    height: 120,
+    marginBottom: 16,
   },
   message: {
-    fontSize: 22,
-    fontWeight: '800',
+    fontSize: 20,
+    fontWeight: '700',
     textAlign: 'center',
-    marginBottom: 2,
+    marginBottom: 8,
+    color: '#1f2937',
   },
   scoreText: {
     fontSize: 16,
     color: '#6b7280',
     textAlign: 'center',
     fontWeight: '600',
+    marginTop: 4,
   },
 });
 

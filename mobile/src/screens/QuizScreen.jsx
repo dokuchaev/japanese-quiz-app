@@ -1,14 +1,27 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, StyleSheet, Pressable, TextInput, FlatList, ScrollView, KeyboardAvoidingView, Platform, Dimensions, Switch } from 'react-native';
-// Gradient temporarily removed to fix runtime error; using solid modern color
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  Switch,
+  Dimensions,
+  Image,
+} from 'react-native';
+import { useTheme } from '../components/ThemeContext';
+import { useStats } from '../components/StatsContext';
+import AnimatedView from '../components/AnimatedView';
+import ResultAnimation from '../components/ResultAnimation';
+import { questionsData } from '../data/questions';
+import { updateStatsAfterTest, updateSymbolStats, updateDailyStats } from '../utils/statsManagerSwitch';
 import { hiraganaData } from '../data/hiragana';
 import { katakanaData } from '../data/katakana';
 import { dakutenData } from '../data/dakuten';
 import { numbersData as numbersDataQuiz } from '../data/numbers';
-import { useTheme } from '../components/ThemeContext';
-import AnimatedView from '../components/AnimatedView';
-import WorkingGifAnimation from '../components/WorkingGifAnimation';
-import ConfettiCannon from 'react-native-confetti-cannon';
 
 
 const { width: deviceWidth, height: deviceHeight } = Dimensions.get('window');
@@ -35,9 +48,14 @@ const formatTime = (seconds) => {
 export default function QuizScreen({ route, navigation }) {
   const { quiz } = route.params ?? { quiz: 'hiragana' };
   const { theme } = useTheme();
+  const { refreshStats } = useStats();
   const [speedMode, setSpeedMode] = useState(false);
-  const [randomMode, setRandomMode] = useState(true); // 15 случайных символов
+  const [randomMode, setRandomMode] = useState(true); // 3 случайных символа
   const [allSymbolsMode, setAllSymbolsMode] = useState(false); // все символы
+  const [expandedBlocks, setExpandedBlocks] = useState({
+    correct: false,
+    incorrect: false,
+  });
   const [state, setState] = useState({
     questions: [],
     currentQuestionIndex: 0,
@@ -56,6 +74,34 @@ export default function QuizScreen({ route, navigation }) {
 
   const timerRef = useRef(null);
   const questionTimerRef = useRef(null);
+
+  const resetQuizState = () => {
+    setState({
+      questions: [],
+      currentQuestionIndex: 0,
+      selectedOption: null,
+      score: { correct: 0, incorrect: 0 },
+      timeElapsed: 0,
+      showResults: false,
+      incorrectAnswers: [],
+      userAnswer: '',
+      started: false,
+      showEmotionAnimation: false,
+      finalResult: null,
+      questionTimer: speedMode ? (quiz.includes('Input') ? 5 : 3) : 3,
+      questionTimerActive: false,
+    });
+    setExpandedBlocks({ correct: false, incorrect: false });
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (questionTimerRef.current) clearInterval(questionTimerRef.current);
+  };
+
+  const toggleBlock = (blockType) => {
+    setExpandedBlocks(prev => ({
+      ...prev,
+      [blockType]: !prev[blockType]
+    }));
+  };
 
   const startQuiz = (numQuestionsToSet, filterFn = null) => {
     const allData = quizSources[quiz];
@@ -136,15 +182,69 @@ export default function QuizScreen({ route, navigation }) {
     } else {
       // Для каны используем новую логику
       if (randomMode) {
-        startQuiz(quiz === 'allkana' ? 30 : 15);
+        startQuiz(quiz === 'allkana' ? 30 : 3);
       } else if (allSymbolsMode) {
         startQuiz(null);
       }
     }
   };
 
+  // Функция для сохранения статистики после завершения теста
+  const saveTestStats = async () => {
+    if (!state.showResults || state.questions.length === 0) return;
+
+    try {
+      // Сохраняем общую статистику
+      const testResults = {
+        correct: state.score.correct,
+        incorrect: state.score.incorrect,
+        timeElapsed: state.timeElapsed,
+        quizType: quiz,
+        accuracy: Math.round((state.score.correct / (state.score.correct + state.score.incorrect)) * 100),
+      };
+
+      const updatedStats = await updateStatsAfterTest(testResults);
+      if (!updatedStats) {
+        console.warn('Failed to update stats');
+        return;
+      }
+
+      // Сохраняем статистику по символам
+      if (state.incorrectAnswers.length > 0) {
+        for (const answer of state.incorrectAnswers) {
+          await updateSymbolStats(answer.question, false);
+        }
+      }
+
+      // Сохраняем статистику правильных ответов (все вопросы минус неправильные)
+      const correctAnswers = state.questions.filter((q) =>
+        !state.incorrectAnswers.some((incorrect) => incorrect.question === q.question)
+      );
+
+      for (const question of correctAnswers) {
+        await updateSymbolStats(question.question, true);
+      }
+
+      // Обновляем дневную статистику
+      await updateDailyStats(testResults);
+
+      // Обновляем контекст статистики для UI с небольшой задержкой
+      setTimeout(() => {
+        refreshStats();
+      }, 100);
+
+    } catch (error) {
+      console.error('Error saving test stats:', error);
+    }
+  };
+
   const showEmotionAnimation = () => {
     setState(prev => ({ ...prev, showEmotionAnimation: true }));
+    // Автоматически скрываем анимацию через 3 секунды
+    setTimeout(() => {
+      hideEmotionAnimation();
+      setState(prev => ({ ...prev, showResults: true }));
+    }, 3000);
   };
 
   const hideEmotionAnimation = () => {
@@ -227,6 +327,13 @@ export default function QuizScreen({ route, navigation }) {
     }
     return () => stopQuestionTimer();
   }, [state.currentQuestionIndex, state.started, state.showResults, speedMode]);
+
+  // Сохранение статистики при показе результатов
+  useEffect(() => {
+    if (state.showResults) {
+      saveTestStats();
+    }
+  }, [state.showResults]);
 
   // Очистка таймеров при размонтировании
   useEffect(() => {
@@ -345,24 +452,18 @@ export default function QuizScreen({ route, navigation }) {
 
   return (
     <KeyboardAvoidingView 
-      style={[styles.container, theme === 'dark' && styles.containerDark]} 
+      style={[
+        styles.container, 
+        theme === 'dark' && styles.containerDark,
+        { backgroundColor: theme === 'dark' ? '#111827' : '#f8fafc' }
+      ]} 
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      {/* Конфетти после успешного прохождения */}
-      {state.showResults && percentage >= 80 && (
-        <ConfettiCannon
-          count={160}
-          origin={{ x: deviceWidth / 2, y: -10 }}
-          fadeOut
-          autoStart
-          explosionSpeed={450}
-          fallSpeed={260}
-        />
-      )}
-      {/* Анимация эмоций */}
+
+      {/* Анимация результатов */}
       {state.showEmotionAnimation && (
-        <WorkingGifAnimation
-          result={state.finalResult ?? percentage}
+        <ResultAnimation
+          result={state.finalResult}
           onAnimationComplete={() => {
             hideEmotionAnimation();
             setState(prev => ({ ...prev, showResults: true }));
@@ -370,7 +471,8 @@ export default function QuizScreen({ route, navigation }) {
         />
       )}
       <ScrollView 
-        contentContainerStyle={styles.contentContainer}
+        style={[styles.scrollView, theme === 'dark' && styles.scrollViewDark]}
+        contentContainerStyle={[styles.contentContainer, theme === 'dark' && styles.contentContainerDark]}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
@@ -384,10 +486,14 @@ export default function QuizScreen({ route, navigation }) {
                 ]}
               />
             </View>
-            <Text style={[styles.meta, theme === 'dark' && styles.metaDark]}>
-              Вопрос {state.currentQuestionIndex + 1} из {state.questions.length} 
-              <Text style={styles.timer}> ⏱ {formatTime(state.timeElapsed)}</Text>
-            </Text>
+            <View style={styles.metaContainer}>
+              <Text style={[styles.timer, theme === 'dark' && styles.timerDark]}>
+                ⏱ {formatTime(state.timeElapsed)}
+              </Text>
+              <Text style={[styles.meta, theme === 'dark' && styles.metaDark]}>
+                Вопрос {state.currentQuestionIndex + 1} из {state.questions.length}
+              </Text>
+            </View>
           </>
         )}
 
@@ -403,16 +509,17 @@ export default function QuizScreen({ route, navigation }) {
                 {/* Переключатель режима случайных символов */}
                 <View style={[styles.testModeToggle, theme === 'dark' && styles.testModeToggleDark]}>
                   <View style={styles.testModeInfo}>
-                    <Text style={[styles.testModeIcon, theme === 'dark' && styles.testModeIconDark]}>
-                      🎲
-                    </Text>
+                    <Image 
+                      source={require('../../assets/icons/game-kost.png')}
+                      style={styles.testModeIcon}
+                    />
                     <View style={styles.testModeTextContainer}>
                       <Text style={[styles.testModeLabel, theme === 'dark' && styles.testModeLabelDark]}>
-                        {isNumbersQuiz ? 'От 1 до 10' : (quiz === 'allkana' ? '30 случайных символов' : '15 случайных символов')}
+                        {isNumbersQuiz ? 'От 1 до 10' : (quiz === 'allkana' ? '30 случайных символов' : '3 случайных символа')}
                       </Text>
-                      <Text style={[styles.testModeDescription, theme === 'dark' && styles.testModeDescriptionDark]}>
-                        {isNumbersQuiz ? 'Простые числа' : 'Быстрый тест'}
-                      </Text>
+                                       <Text style={[styles.testModeDescription, theme === 'dark' && styles.testModeDescriptionDark]}>
+                   {isNumbersQuiz ? 'Простые числа' : 'Быстрый тест (3 вопроса)'}
+                 </Text>
                     </View>
                   </View>
                   <Switch
@@ -426,9 +533,17 @@ export default function QuizScreen({ route, navigation }) {
                 {/* Переключатель режима всех символов */}
                 <View style={[styles.testModeToggle, theme === 'dark' && styles.testModeToggleDark]}>
                   <View style={styles.testModeInfo}>
-                    <Text style={[styles.testModeIcon, theme === 'dark' && styles.testModeIconDark]}>
-                      📚
-                    </Text>
+                    {theme === 'dark' ? (
+                      <Image 
+                        source={require('../../assets/icons/hiragana-k-white.png')}
+                        style={styles.testModeIcon}
+                      />
+                    ) : (
+                      <Image 
+                        source={require('../../assets/icons/hiragana-k.png')}
+                        style={styles.testModeIcon}
+                      />
+                    )}
                     <View style={styles.testModeTextContainer}>
                       <Text style={[styles.testModeLabel, theme === 'dark' && styles.testModeLabelDark]}>
                         {isNumbersQuiz ? 'От 10 до 100' : 'Все символы'}
@@ -475,34 +590,32 @@ export default function QuizScreen({ route, navigation }) {
                   onPress={startTestWithOptions}
                 >
                   <Text style={styles.startTestButtonText}>
-                    🚀 Начать тест
+                    Начать тест
                   </Text>
                 </Pressable>
                 
-                {/* Кнопки для просмотра таблиц */}
-                <Text style={[styles.sectionTitle, theme === 'dark' && styles.sectionTitleDark]}>
-                  Изучение
-                </Text>
+                {/* Отступ между кнопками */}
+                <View style={styles.buttonSpacer} />
                 
                 {isNumbersQuiz ? (
                   <Pressable style={styles.button} onPress={() => navigation.navigate('NumbersTable', { range: 'all' })}>
-                    <Text style={styles.buttonText}>Таблица числительных</Text>
+                    <Text style={styles.buttonText}>Открыть таблицу числительных</Text>
                   </Pressable>
                 ) : (
                   <>
                     {(quiz === 'hiragana' || quiz === 'hiraganaInput') && (
                       <Pressable style={styles.button} onPress={() => navigation.navigate('KanaTable', { quiz: 'hiragana' })}>
-                        <Text style={styles.buttonText}>Таблица Хираганы</Text>
+                        <Text style={styles.buttonText}>Открыть таблицу Хираганы</Text>
                       </Pressable>
                     )}
                     {(quiz === 'katakana' || quiz === 'katakanaInput') && (
                       <Pressable style={styles.button} onPress={() => navigation.navigate('KanaTable', { quiz: 'katakana' })}>
-                        <Text style={styles.buttonText}>Таблица Катаканы</Text>
+                        <Text style={styles.buttonText}>Открыть таблицу Катаканы</Text>
                       </Pressable>
                     )}
                     {(quiz === 'dakuten' || quiz === 'dakutenInput') && (
                       <Pressable style={styles.button} onPress={() => navigation.navigate('KanaTable', { quiz: 'dakuten' })}>
-                        <Text style={styles.buttonText}>Таблица Дакутен/хандакутэн</Text>
+                        <Text style={styles.buttonText}>Открыть таблицу Дакутен/хандакутэн</Text>
                       </Pressable>
                     )}
                   </>
@@ -518,159 +631,197 @@ export default function QuizScreen({ route, navigation }) {
               <Text style={[styles.scoreText, theme === 'dark' && styles.scoreTextDark]}>👍 {state.score.correct}   👎 {state.score.incorrect}</Text>
               <Text style={[styles.timerText, theme === 'dark' && styles.timerTextDark]}>⏱ {formatTime(state.timeElapsed)}</Text>
 
+              {/* Блок с ошибками */}
               {state.incorrectAnswers.length > 0 && (
-                <View style={{ marginTop: 16, width: '100%' }}>
-                  <Text style={[styles.title, theme === 'dark' && styles.titleDark]}>Ошибки</Text>
-                  <View style={styles.incorrectAnswersContainer}>
-                    {state.incorrectAnswers.map((item, index) => (
-                      <Text key={index} style={[styles.incorrectAnswer, theme === 'dark' && styles.incorrectAnswerDark]}>
-                        • {item.question}: {item.yourAnswer === 'Время истекло' ? '⏰ Время истекло' : `ваш ответ ${item.yourAnswer || 'не указан'}`}, правильный {item.correctAnswer}
-                      </Text>
-                    ))}
-                  </View>
+                <View style={[styles.mistakesBlock, theme === 'dark' && styles.mistakesBlockDark]}>
+                  <Pressable 
+                    style={styles.blockHeader} 
+                    onPress={() => toggleBlock('incorrect')}
+                  >
+                    <Text style={[styles.mistakesTitle, theme === 'dark' && styles.mistakesTitleDark]}>
+                      ❌ Ошибки ({state.score.incorrect})
+                    </Text>
+                    <Text style={styles.expandIcon}>
+                      {expandedBlocks.incorrect ? '▼' : '▶'}
+                    </Text>
+                  </Pressable>
+                  
+                  {expandedBlocks.incorrect && (
+                    <View style={styles.blockContent}>
+                      {state.incorrectAnswers.map((item, index) => (
+                        <View key={index} style={[styles.mistakeItem, theme === 'dark' && styles.mistakeItemDark]}>
+                          <Text style={[styles.mistakeSymbol, theme === 'dark' && styles.mistakeSymbolDark]}>
+                            {item.question}
+                          </Text>
+                          <Text style={[styles.mistakeDetails, theme === 'dark' && styles.mistakeDetailsDark]}>
+                            {item.yourAnswer === 'Время истекло' ? '⏰ Время истекло' : `Ваш ответ: ${item.yourAnswer || 'не указан'}`}
+                          </Text>
+                          <Text style={[styles.mistakeCorrect, theme === 'dark' && styles.mistakeCorrectDark]}>
+                            Правильно: {item.correctAnswer}
+                          </Text>
+                        </View>
+                      ))}
+                    </View>
+                  )}
                 </View>
               )}
 
-              <View style={{ gap: 10, marginTop: 20, width: '100%' }}>
-                {/* Кнопки повторного запуска как в веб-версии */}
+              {/* Блок с правильными ответами */}
+              {state.score.correct > 0 && (
+                <View style={[styles.correctBlock, theme === 'dark' && styles.correctBlockDark]}>
+                  <Pressable 
+                    style={styles.blockHeader} 
+                    onPress={() => toggleBlock('correct')}
+                  >
+                    <Text style={[styles.correctTitle, theme === 'dark' && styles.correctTitleDark]}>
+                      ✅ Правильные ответы ({state.score.correct})
+                    </Text>
+                    <Text style={styles.expandIcon}>
+                      {expandedBlocks.correct ? '▼' : '▶'}
+                    </Text>
+                  </Pressable>
+                  
+                  {expandedBlocks.correct && (
+                    <View style={styles.blockContent}>
+                      {state.questions
+                        .filter((item) => {
+                          // Проверяем, что этот вопрос не в списке ошибок
+                          return !state.incorrectAnswers.some(inc => 
+                            inc.question === item.question
+                          );
+                        })
+                        .map((item, index) => (
+                          <View key={index} style={[styles.mistakeItem, styles.correctItem, theme === 'dark' && styles.mistakeItemDark]}>
+                            <Text style={[styles.mistakeSymbol, styles.correctSymbol, theme === 'dark' && styles.mistakeSymbolDark]}>
+                              {item.question}
+                            </Text>
+                            <Text style={[styles.mistakeCorrect, styles.correctAnswer, theme === 'dark' && styles.mistakeCorrectDark]}>
+                              Правильно: {item.correctAnswer}
+                            </Text>
+                          </View>
+                        ))}
+                    </View>
+                  )}
+                </View>
+              )}
+
+              <View style={{ gap: 16, marginTop: 20, width: '100%' }}>
+                {/* Кнопки для страницы результатов */}
                 {isNumbersQuiz ? (
-                  <>
-                    <Text style={[styles.sectionTitle, theme === 'dark' && styles.sectionTitleDark]}>
-                      Хотите повторить числительные?
-                    </Text>
-                    <Pressable style={styles.button} onPress={() => navigation.navigate('NumbersTable', { range: 'all' })}>
-                      <Text style={styles.buttonText}>Таблица числительных</Text>
-                    </Pressable>
-                    
-                    <Text style={[styles.sectionTitle, theme === 'dark' && styles.sectionTitleDark]}>
-                      {quiz === 'numbers' ? 'Тест по числительным' : 'Тест по числительным (ввод)'}
-                    </Text>
-                    <Pressable style={styles.button} onPress={() => startQuiz(20, (q) => +q.correctAnswer <= 10)}>
-                      <Text style={styles.buttonText}>От 1 до 10</Text>
-                    </Pressable>
-                    <Pressable style={styles.button} onPress={() => startQuiz(20, (q) => +q.correctAnswer > 10)}>
-                      <Text style={styles.buttonText}>От 10 до 100</Text>
-                    </Pressable>
-                  </>
+                  <Pressable style={styles.button} onPress={() => navigation.navigate('NumbersTable', { range: 'all' })}>
+                    <Text style={styles.buttonText}>Повторить числительные</Text>
+                  </Pressable>
                 ) : (
                   <>
                     {(quiz === 'hiragana' || quiz === 'hiraganaInput') && (
-                      <>
-                        <Text style={[styles.sectionTitle, theme === 'dark' && styles.sectionTitleDark]}>
-                          Хотите повторить хирагану?
-                        </Text>
-                        <Pressable style={styles.button} onPress={() => navigation.navigate('KanaTable', { quiz: 'hiragana' })}>
-                          <Text style={styles.buttonText}>Таблица Хираганы</Text>
-                        </Pressable>
-                      </>
+                      <Pressable style={styles.button} onPress={() => navigation.navigate('KanaTable', { quiz: 'hiragana' })}>
+                        <Text style={styles.buttonText}>Повторить хирагану</Text>
+                      </Pressable>
                     )}
 
                     {(quiz === 'katakana' || quiz === 'katakanaInput') && (
-                      <>
-                        <Text style={[styles.sectionTitle, theme === 'dark' && styles.sectionTitleDark]}>
-                          Хотите повторить катакану?
-                        </Text>
-                        <Pressable style={styles.button} onPress={() => navigation.navigate('KanaTable', { quiz: 'katakana' })}>
-                          <Text style={styles.buttonText}>Таблица Катаканы</Text>
-                        </Pressable>
-                      </>
+                      <Pressable style={styles.button} onPress={() => navigation.navigate('KanaTable', { quiz: 'katakana' })}>
+                        <Text style={styles.buttonText}>Повторить катакану</Text>
+                      </Pressable>
                     )}
 
                     {(quiz === 'dakuten' || quiz === 'dakutenInput') && (
-                      <>
-                        <Text style={[styles.sectionTitle, theme === 'dark' && styles.sectionTitleDark]}>
-                          Хотите повторить дакутэн/хандакутэн?
-                        </Text>
-                        <Pressable style={styles.button} onPress={() => navigation.navigate('KanaTable', { quiz: 'dakuten' })}>
-                          <Text style={styles.buttonText}>Таблица Дакутен/хандакутэн</Text>
-                        </Pressable>
-                      </>
+                      <Pressable style={styles.button} onPress={() => navigation.navigate('KanaTable', { quiz: 'dakuten' })}>
+                        <Text style={styles.buttonText}>Повторить дакутэн/хандакутэн</Text>
+                      </Pressable>
                     )}
 
-                    <Text style={[styles.sectionTitle, theme === 'dark' && styles.sectionTitleDark]}>
-                      Тест по {isInputQuiz ? getInputQuizTitle() : getQuizTitle()}
-                    </Text>
-                    <Pressable style={styles.button} onPress={() => startQuiz(quiz === 'allkana' ? 30 : 15)}>
-                      <Text style={styles.buttonText}>{quiz === 'allkana' ? '30 случайных вопросов' : '15 случайных вопросов'}</Text>
-                    </Pressable>
-                    <Pressable style={styles.button} onPress={() => startQuiz(null)}>
-                      <Text style={styles.buttonText}>Все вопросы</Text>
-                    </Pressable>
+                    {(quiz === 'allkana') && (
+                      <Pressable style={styles.button} onPress={() => navigation.navigate('KanaTable', { quiz: 'hiragana' })}>
+                        <Text style={styles.buttonText}>Повторить кану</Text>
+                      </Pressable>
+                    )}
                   </>
                 )}
+
+                {/* Кнопка "Попробовать снова" */}
+                <Pressable style={[styles.button, { backgroundColor: '#10b981' }]} onPress={resetQuizState}>
+                  <Text style={styles.buttonText}>Попробовать снова</Text>
+                </Pressable>
+
+                {/* Кнопка "На главную" */}
+                <Pressable style={[styles.button, { backgroundColor: '#6b7280' }]} onPress={() => navigation.navigate('Home')}>
+                  <Text style={styles.buttonText}>На главную</Text>
+                </Pressable>
               </View>
             </View>
           </AnimatedView>
         ) : currentQuestion ? (
           <>
             <AnimatedView animationType="fadeIn" duration={400}>
-              <View style={[styles.question, (quiz === 'numbers') && styles.questionNumber, theme === 'dark' && styles.questionDark]}>
-                <Text style={[styles.questionText, theme === 'dark' && styles.questionTextDark]}>
-                  {quiz === 'numbers' ? `${currentQuestion?.question} (${currentQuestion?.reading})` : currentQuestion?.question}
-                </Text>
-              </View>
-            </AnimatedView>
+              <View style={[styles.questionContainer, (quiz === 'numbers') && styles.questionNumber, theme === 'dark' && styles.questionContainerDark]}>
+                {/* Вопрос */}
+                <View style={styles.questionSection}>
+                  <Text style={[styles.questionText, theme === 'dark' && styles.questionTextDark]}>
+                    {quiz === 'numbers' ? `${currentQuestion?.question} (${currentQuestion?.reading})` : currentQuestion?.question}
+                  </Text>
+                </View>
 
-            <AnimatedView animationType="slideIn" duration={500} delay={200}>
-              {'options' in currentQuestion && !isInputQuiz ? (
-                <View style={styles.options}>
-                  {currentQuestion.options.map((option, index) => {
-                    let bg = '#e6effe';
-                    let clr = '#222';
-                    if (state.selectedOption) {
-                      if (String(option) === String(currentQuestion.correctAnswer)) {
-                        bg = '#10b981';
-                        clr = '#fff';
-                      } else if (String(option) === String(state.selectedOption)) {
-                        bg = '#ef4444';
-                        clr = '#fff';
-                      }
-                    }
-                    return (
-                      <Pressable key={index} onPress={() => handleOptionClick(option)} style={[styles.option, { backgroundColor: bg }]} disabled={!!state.selectedOption}>
-                        <Text style={[styles.optionText, { color: clr }]}>{String(option)}</Text>
+                {/* Ответы */}
+                <AnimatedView animationType="slideIn" duration={500} delay={200}>
+                  {'options' in currentQuestion && !isInputQuiz ? (
+                    <View style={styles.optionsGrid}>
+                      {currentQuestion.options.map((option, index) => {
+                        let bg = '#e6effe';
+                        let clr = '#222';
+                        if (state.selectedOption) {
+                          if (String(option) === String(currentQuestion.correctAnswer)) {
+                            bg = '#10b981';
+                            clr = '#fff';
+                          } else if (String(option) === String(state.selectedOption)) {
+                            bg = '#ef4444';
+                            clr = '#fff';
+                          }
+                        }
+                        return (
+                          <Pressable key={index} onPress={() => handleOptionClick(option)} style={[styles.optionGrid, { backgroundColor: bg }]} disabled={!!state.selectedOption}>
+                            <Text style={[styles.optionText, { color: clr }]}>{String(option)}</Text>
+                          </Pressable>
+                        );
+                      })}
+                    </View>
+                  ) : (
+                    <View style={styles.inputSection}>
+                      <TextInput
+                        value={state.userAnswer}
+                        onChangeText={(t) => setState((prev) => ({ ...prev, userAnswer: t }))}
+                        placeholder={isNumbersQuiz ? 'Введите число (например: 5)' : 'Введите чтение каны (например: a)'}
+                        placeholderTextColor={theme === 'dark' ? '#9ca3af' : '#6b7280'}
+                        style={[styles.input, theme === 'dark' && styles.inputDark]}
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        returnKeyType="done"
+                        onSubmitEditing={handleSubmitAnswer}
+                      />
+                      <Pressable style={styles.button} onPress={handleSubmitAnswer}>
+                        <Text style={styles.buttonText}>Ответить</Text>
                       </Pressable>
-                    );
-                  })}
-                </View>
-              ) : (
-                <View style={{ alignItems: 'center', marginTop: 16 }}>
-                  <Text style={[styles.inputHint, theme === 'dark' && styles.inputHintDark]}>
-                    {isNumbersQuiz ? 'Введите число (например: 5)' : 'Введите чтение каны (например: a)'}
-                  </Text>
-                  <TextInput
-                    value={state.userAnswer}
-                    onChangeText={(t) => setState((prev) => ({ ...prev, userAnswer: t }))}
-                    placeholder="Ваш ответ"
-                    placeholderTextColor={theme === 'dark' ? '#9ca3af' : '#6b7280'}
-                    style={[styles.input, theme === 'dark' && styles.inputDark]}
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    returnKeyType="done"
-                    onSubmitEditing={handleSubmitAnswer}
-                  />
-                  <Pressable style={styles.button} onPress={handleSubmitAnswer}>
-                    <Text style={styles.buttonText}>Ответить</Text>
-                  </Pressable>
-                </View>
-              )}
+                    </View>
+                  )}
 
-              {/* Индикатор таймера вопроса для режима скорости */}
-              {speedMode && state.questionTimerActive && (
-                <View style={styles.questionTimerContainer}>
-                  <Text style={[styles.questionTimerText, theme === 'dark' && styles.questionTimerTextDark]}>
-                    ⏰ {state.questionTimer}с
-                  </Text>
-                  <View style={styles.questionTimerBar}>
-                    <View
-                      style={[
-                        styles.questionTimerProgress,
-                        { width: `${(state.questionTimer / (quiz.includes('Input') ? 5 : 3)) * 100}%` },
-                      ]}
-                    />
-                  </View>
-                </View>
-              )}
+                  {/* Индикатор таймера вопроса для режима скорости */}
+                  {speedMode && state.questionTimerActive && (
+                    <View style={styles.questionTimerContainer}>
+                      <Text style={[styles.questionTimerText, theme === 'dark' && styles.questionTimerTextDark]}>
+                        ⏰ {state.questionTimer}с
+                      </Text>
+                      <View style={styles.questionTimerBar}>
+                        <View
+                          style={[
+                            styles.questionTimerProgress,
+                            { width: `${(state.questionTimer / (quiz.includes('Input') ? 5 : 3)) * 100}%` },
+                          ]}
+                        />
+                      </View>
+                    </View>
+                  )}
+                </AnimatedView>
+              </View>
             </AnimatedView>
           </>
         ) : null}
@@ -686,14 +837,26 @@ const styles = StyleSheet.create({
   },
   containerDark: {
     backgroundColor: '#111827',
+    flex: 1,
+  },
+  scrollView: {
+    backgroundColor: '#f8fafc',
+    flex: 1,
+  },
+  scrollViewDark: {
+    backgroundColor: '#111827',
+    flex: 1,
   },
   contentContainer: {
     padding: 16,
     paddingBottom: 32,
-    backgroundColor: 'transparent',
+    backgroundColor: '#f8fafc',
+  },
+  contentContainerDark: {
+    backgroundColor: '#111827',
   },
   title: { 
-    fontSize: 20, 
+    fontSize: 28, 
     fontWeight: '700', 
     textAlign: 'center',
     marginBottom: 0,
@@ -768,11 +931,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#8b5cf6',
     borderRadius: 3,
   },
+  metaContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
   meta: { 
     fontSize: 12, 
     textAlign: 'right',
     color: '#6b7280',
-    marginBottom: 10,
   },
   metaDark: {
     color: '#9ca3af',
@@ -782,30 +950,57 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#2563eb',
   },
-  question: { 
+  timerDark: {
+    color: '#60a5fa',
+  },
+  questionContainer: { 
     marginTop: 24, 
-    alignSelf: 'center', 
-    padding: 20, 
-    borderRadius: 16, 
+    paddingHorizontal: 12,
+    paddingTop: 16,
+    paddingBottom: 16,
+    borderRadius: 20, 
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 4,
+      height: 8,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 8,
-    minWidth: '80%',
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 12,
+    width: '100%',
+    minHeight: 120,
+  },
+  questionContainerDark: {
+    backgroundColor: 'rgba(31, 41, 55, 0.9)',
+  },
+  question: { 
+    marginTop: 24, 
+    padding: 40, 
+    borderRadius: 20, 
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 12,
+    width: '100%',
+    minHeight: 120,
   },
   questionDark: {
     backgroundColor: 'rgba(31, 41, 55, 0.9)',
+  },
+  questionSection: {
+    marginBottom: 24,
   },
   questionNumber: { 
     paddingHorizontal: 30,
   },
   questionText: { 
-    fontSize: 28,
+    fontSize: 80,
     fontWeight: '700',
     textAlign: 'center',
     color: '#1f2937',
@@ -834,18 +1029,23 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(0, 0, 0, 0.05)',
   },
   optionText: { 
-    fontSize: 18, 
-    fontWeight: '600',
+    fontSize: 28, 
+    fontWeight: '700',
     color: '#1f2937',
+    textAlign: 'center',
+  },
+  inputSection: {
+    alignItems: 'center',
+    marginTop: 16,
   },
   input: { 
     borderWidth: 2, 
     borderColor: '#d1d5db', 
     borderRadius: 12, 
     padding: 16, 
-    width: '80%', 
+    width: '100%', 
     marginBottom: 16,
-    fontSize: 18,
+    fontSize: 16,
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     textAlign: 'center',
     shadowColor: '#000',
@@ -862,16 +1062,7 @@ const styles = StyleSheet.create({
     borderColor: '#4b5563',
     color: '#f9fafb',
   },
-  inputHint: { 
-    fontSize: 14, 
-    color: '#6b7280', 
-    marginBottom: 12,
-    textAlign: 'center',
-    fontStyle: 'italic',
-  },
-  inputHintDark: {
-    color: '#9ca3af',
-  },
+
   percentage: { 
     fontSize: 24, 
     fontWeight: '700', 
@@ -897,23 +1088,125 @@ const styles = StyleSheet.create({
   timerTextDark: {
     color: '#9ca3af',
   },
-  incorrectAnswersContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+  mistakesBlock: {
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    borderRadius: 16,
+    padding: 16,
+    marginTop: 20,
+    width: '100%',
+    borderWidth: 2,
+    borderColor: 'rgba(239, 68, 68, 0.3)',
+  },
+  mistakesBlockDark: {
+    backgroundColor: 'rgba(239, 68, 68, 0.15)',
+    borderColor: 'rgba(239, 68, 68, 0.4)',
+  },
+  mistakesTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#dc2626',
+    textAlign: 'center',
+    marginBottom: 0,
+    lineHeight: 24,
+    textAlignVertical: 'center',
+  },
+  mistakesTitleDark: {
+    color: '#f87171',
+  },
+  mistakeItem: {
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     borderRadius: 12,
     padding: 16,
+    marginBottom: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: '#ef4444',
+  },
+  mistakeItemDark: {
+    backgroundColor: 'rgba(31, 41, 55, 0.9)',
+    borderLeftColor: '#f87171',
+  },
+  mistakeSymbol: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#1f2937',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  mistakeSymbolDark: {
+    color: '#f9fafb',
+  },
+  mistakeDetails: {
+    fontSize: 14,
+    color: '#ef4444',
+    textAlign: 'center',
+    marginBottom: 4,
+    fontStyle: 'italic',
+  },
+  mistakeDetailsDark: {
+    color: '#f87171',
+  },
+  mistakeCorrect: {
+    fontSize: 14,
+    color: '#10b981',
+    textAlign: 'center',
+    fontWeight: '600',
+  },
+  mistakeCorrectDark: {
+    color: '#34d399',
+  },
+  blockHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    minHeight: 50,
+  },
+  expandIcon: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#6b7280',
+    lineHeight: 24,
+    textAlignVertical: 'center',
+  },
+  blockContent: {
     marginTop: 8,
   },
-  incorrectAnswer: {
-    fontSize: 14,
-    color: '#374151',
-    marginBottom: 8,
-    lineHeight: 20,
+  correctItem: {
+    borderLeftColor: '#10b981',
   },
-  incorrectAnswerDark: {
-    color: '#d1d5db',
+  correctSymbol: {
+    color: '#10b981',
+  },
+  correctAnswer: {
+    color: '#10b981',
+  },
+  correctBlock: {
+    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+    borderRadius: 16,
+    padding: 16,
+    marginTop: 20,
+    width: '100%',
+    borderWidth: 2,
+    borderColor: 'rgba(16, 185, 129, 0.3)',
+  },
+  correctBlockDark: {
+    backgroundColor: 'rgba(16, 185, 129, 0.15)',
+    borderColor: 'rgba(16, 185, 129, 0.4)',
+  },
+  correctTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#059669',
+    textAlign: 'center',
+    marginBottom: 0,
+    lineHeight: 24,
+    textAlignVertical: 'center',
+  },
+  correctTitleDark: {
+    color: '#34d399',
   },
   questionTimerContainer: {
-    marginTop: 28, // опустили ниже на ~20px
+    marginTop: 20,
     marginBottom: 16,
     alignItems: 'center',
   },
@@ -1322,13 +1615,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   testModeIcon: {
-    fontSize: 20,
+    width: 24,
+    height: 24,
     marginRight: 12,
-    color: '#1f2937',
+    resizeMode: 'contain',
   },
-  testModeIconDark: {
-    color: '#f9fafb',
-  },
+
   testModeTextContainer: {
     flex: 1,
   },
@@ -1370,6 +1662,39 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 16,
   },
+  buttonSpacer: {
+    height: 20,
+  },
+  optionsGrid: {
+    marginTop: 0,
+    paddingHorizontal: 0,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    width: '100%',
+    justifyContent: 'center',
+    gap: 10,
+  },
+  optionGrid: {
+    width: '45%',
+    paddingVertical: 32,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.05)',
+    minHeight: 120,
+    marginBottom: 0,
+  },
+
+
 });
 
 

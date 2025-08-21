@@ -306,17 +306,6 @@ const Quiz = () => {
           {(quiz === "numbers" || quiz === "numbersInput") ? (
               <div className="button-wrapper button-wrapper-flex">
                 <div>
-                  <h3>Хотите повторить числительные?</h3>
-                  <button
-                      className="quiz-button"
-                      onClick={() => navigate('/quiz/numbers/table', { state: { fromQuiz: 'numbers' } })}
-                      style={{ marginBottom: '1rem' }}
-                  >
-                    Таблица числительных
-                  </button>
-                </div>
-
-                <div>
                   <h3>{quiz === 'numbers' ? 'Тест по числительным' : 'Тест по числительным (ввод)'}</h3>
                   <div className="button-wrapper-flex-btns">
                     <button className="quiz-button" onClick={() => startQuiz(20, (q) => +q.correctAnswer <= 10)}>
@@ -327,9 +316,42 @@ const Quiz = () => {
                     </button>
                   </div>
                 </div>
+
+                <div>
+                  <h3>Хотите повторить числительные?</h3>
+                  <button
+                      className="quiz-button"
+                      onClick={() => navigate('/quiz/numbers/table', { state: { fromQuiz: 'numbers' } })}
+                      style={{ marginBottom: '1rem' }}
+                  >
+                    Таблица числительных
+                  </button>
+                </div>
               </div>
           ) : (
               <div className="button-wrapper button-wrapper-flex">
+                <div>
+                  <h3>Тест по {
+                    quiz === 'hiragana' ? 'хирагане' :
+                        quiz === 'hiraganaInput' ? 'хирагане (ввод)' :
+                            quiz === 'katakana' ? 'катакане' :
+                                quiz === 'katakanaInput' ? 'катакане (ввод)' :
+                                    quiz === 'dakuten' ? 'дакутэн/хандакутэн' :
+                                        quiz === 'dakutenInput' ? 'дакутэн/хандакутэн (ввод)' :
+                                            quiz === 'allkana' ? 'всем символам каны' :
+                                                quiz === 'allkanaInput' ? 'всем символам каны (ввод)' : ""}
+                                               </h3>
+
+                  <div className="button-wrapper-flex-btns">
+                    <button className="quiz-button" onClick={() => startQuiz(quiz === 'allkana' ? 30 : 15)}>
+                      {quiz === 'allkana' ? "30 случайных вопросов" : "15 случайных вопросов"}
+                    </button>
+                    <button className="quiz-button" onClick={() => startQuiz(null)}>Все вопросы</button>
+                  </div>
+
+
+                </div>
+
                 {(quiz === 'hiragana' || quiz === "hiraganaInput") && (
                     <div>
                       <h3>Хотите повторить хирагану?</h3>
@@ -367,27 +389,6 @@ const Quiz = () => {
                       </button>
                     </div>
                 )}
-                <div>
-                  <h3>Тест по {
-                    quiz === 'hiragana' ? 'хирагане' :
-                        quiz === 'hiraganaInput' ? 'хирагане (ввод)' :
-                            quiz === 'katakana' ? 'катакане' :
-                                quiz === 'katakanaInput' ? 'катакане (ввод)' :
-                                    quiz === 'dakuten' ? 'дакутэн/хандакутэн' :
-                                        quiz === 'dakutenInput' ? 'дакутэн/хандакутэн (ввод)' :
-                                            quiz === 'allkana' ? 'всем символам каны' :
-                                                quiz === 'allkanaInput' ? 'всем символам каны (ввод)' : ""}
-                                               </h3>
-
-                  <div className="button-wrapper-flex-btns">
-                    <button className="quiz-button" onClick={() => startQuiz(quiz === 'allkana' ? 30 : 15)}>
-                      {quiz === 'allkana' ? "30 случайных вопросов" : "15 случайных вопросов"}
-                    </button>
-                    <button className="quiz-button" onClick={() => startQuiz(null)}>Все вопросы</button>
-                  </div>
-
-
-                </div>
               </div>
           )}
         </div>
@@ -431,17 +432,23 @@ const Quiz = () => {
 
 
               {incorrectAnswers.length > 0 && (
-                  <div style={{marginTop: "20px", textAlign: "left", maxWidth: "600px", marginInline: "auto"}}>
-                    <h3 className="mistakes-title">Ошибки:</h3>
-                    <ul className="mistakes-list">
+                  <div className="mistakes-block">
+                    <h3 className="mistakes-title">
+                      ❌ Ошибки ({incorrectAnswers.length})
+                    </h3>
+                    <div className="mistakes-list">
                       {incorrectAnswers.map((item, idx) => (
-                          <li key={idx} style={{marginBottom: "10px"}}>
-                            <strong>{item.question}</strong>: ваш ответ – <span
-                              style={{color: "red"}}>{item.yourAnswer}</span>, правильный – <span
-                              style={{color: "green"}}>{item.correctAnswer}</span>
-                          </li>
+                          <div key={idx} className="mistake-item">
+                            <div className="mistake-symbol">{item.question}</div>
+                            <div className="mistake-details">
+                              Ваш ответ: <span className="mistake-wrong">{item.yourAnswer}</span>
+                            </div>
+                            <div className="mistake-correct">
+                              Правильно: <span className="mistake-right">{item.correctAnswer}</span>
+                            </div>
+                          </div>
                       ))}
-                    </ul>
+                    </div>
                   </div>
               )}
 
@@ -485,14 +492,15 @@ const Quiz = () => {
                     <input
                         type="text"
                         value={userAnswer}
-                        placeholder="Ваш ответ"
+                        placeholder={quiz === "numbersInput" ? "Введите число (например: 5)" : "Введите чтение каны (например: a)"}
                         style={{
                           padding: "10px",
-                          fontSize: "18px",
+                          fontSize: "16px",
                           borderRadius: "8px",
                           border: "1px solid #ccc",
                           marginBottom: "20px",
                           marginRight: "10px",
+                          width: "60%",
                         }}
                         onChange={handleAnswerChange}
                     />

@@ -1,0 +1,72 @@
+.floating-contact-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.floating-contact-button:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+.floating-contact-button:active {
+  transform: translateY(0) scale(0.95);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  .floating-contact-button {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  }
+  
+  .floating-contact-button:hover {
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+    background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .floating-contact-button {
+    bottom: 16px;
+    right: 16px;
+    width: 45px;
+    height: 45px;
+    font-size: 18px;
+  }
+}
+
+/* Hide on very small screens */
+@media (max-width: 480px) {
+  .floating-contact-button {
+    bottom: 12px;
+    right: 12px;
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+}
+
+
+
+
+
+

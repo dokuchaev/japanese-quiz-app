@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "26638f1f-3d04-40f4-ad1c-c4db3cf5d61a"
+      }
+    },
+    "ios": {
+      "bundleIdentifier": "com.dmitry.nsaa.japanesequizapp",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    }
+  }
+}
